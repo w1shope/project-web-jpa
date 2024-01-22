@@ -52,7 +52,7 @@
       <td th:text="${board.getCreatedDate()}">작성일자</td>
       <td th:text="${board.getViewCnt()}">조회수</td>
       <td th:text="${board.getLikeCnt()}">좋아요</td>
-      <td><a th:href="@{/board/{id}(id=${board.getBoardId()})}" class="btn btn-primary">자세히 보기</a></td>
+      <td><a th:href="@{/boards/{id}(id=${board.getBoardId()})}" class="btn btn-primary">자세히 보기</a></td>
     </tr>
     </tbody>
   </table>
