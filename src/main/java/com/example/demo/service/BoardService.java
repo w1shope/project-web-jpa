@@ -32,24 +32,21 @@ public class BoardService {
             Member loginMember = memberService.getLoginMember(request.getLoginId());
 
             View view = View.builder()
-                    .viewCnt(0)
                     .likeCnt(0)
+                    .member(loginMember)
                     .build();
             viewService.save(view);
 
             Board board = Board.builder()
-                    .member(loginMember)
                     .title(request.getTitle())
                     .content(request.getContent())
                     .createdDate(LocalDateTime.now())
                     .editDate(LocalDateTime.now())
+                    .viewCnt(0)
+                    .view(view)
+                    .member(loginMember)
                     .build();
             boardRepository.save(board);
-
-            // 연관관계 편의 메서드
-            view.relationshipToMember(loginMember);
-            board.relationshipToView(view);
-            board.relationshipToMember(loginMember);
 
             return board.getId();
         } catch (NoSuchElementException ex) {
@@ -58,8 +55,8 @@ public class BoardService {
     }
 
     public Board findBoard(Long id) {
-        Board board = boardRepository.getBoardById(id);
-        return board;
+        return  boardRepository.findBoardWithViewById(id)
+                .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 없습니다"));
     }
 
     public List<Board> findAll() {
@@ -74,4 +71,8 @@ public class BoardService {
         return boardRepository.getAllPosts(loginId);
     }
 
+    @Transactional
+    public void increaseViewCnt(Board board) {
+        boardRepository.increaseViewCnt(board.getId());
+    }
 }

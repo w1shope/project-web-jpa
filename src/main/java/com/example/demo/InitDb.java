@@ -36,33 +36,34 @@ public class InitDb {
         private final BoardRepository boardRepository;
 
         public void initService() {
-            View view = View.builder()
-                    .likeCnt(0)
-                    .viewCnt(0)
-                    .build();
-            viewRepository.save(view);
-
             Member member = Member.builder()
                     .loginId("test")
                     .password("test")
+                    .username("test")
+                    .nickName("test")
                     .email("test@gmail.com")
                     .phone("010-1234-5678")
                     .createdDate(LocalDateTime.now())
-                    .username("nameA")
-                    .nickName("nickNameA")
                     .build();
-            view.relationshipToMember(member);
             memberRepository.save(member);
 
-            Board board = Board.builder()
-                    .title("제목 TEST")
-                    .content("내용 TEST")
-                    .editDate(LocalDateTime.now())
-                    .createdDate(LocalDateTime.now())
+            View view = View.builder()
+                    .likeCnt(0)
+                    .member(member)
                     .build();
-            board.relationshipToView(view);
-            board.relationshipToMember(member);
+            viewRepository.save(view);
+
+            Board board = Board.builder()
+                    .title("titleA")
+                    .content("contentA")
+                    .createdDate(LocalDateTime.now())
+                    .editDate(LocalDateTime.now())
+                    .viewCnt(0)
+                    .member(member)
+                    .view(view)
+                    .build();
             boardRepository.save(board);
+
         }
     }
 }

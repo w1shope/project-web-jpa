@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -18,12 +20,6 @@ public class ViewService {
     public Long save(View view) {
         return viewRepository.save(view).getId();
     }
-
-    @Transactional
-    public void increaseViewCnt(Board board) {
-        viewRepository.increaseViewCnt(board.getView().getId());
-    }
-
     @Transactional
     public void increaseLikeCnt(Board board) {
         viewRepository.increaseLikeCnt(board.getId());

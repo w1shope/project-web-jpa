@@ -30,12 +30,12 @@ public class Member {
     private LocalDateTime createdDate;
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Board> boards = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<View> views = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    private List<View> view = new ArrayList<>();
 }
 
 

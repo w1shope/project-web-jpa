@@ -44,7 +44,7 @@ public class BoardController {
     @GetMapping("/boards/{id}")
     public String viewBoard(@PathVariable("id") Long boardId, Model model) {
         Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
-        viewService.increaseViewCnt(findBoard); // 조회수 증가
+        boardService.increaseViewCnt(findBoard); // 조회수 증가
         ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
                 , findBoard.getContent(), findBoard.getView().getLikeCnt());
         model.addAttribute("board", response);
@@ -58,7 +58,7 @@ public class BoardController {
     public String getAllBoards(Model model) {
         List<ResponseBoardListDto> result = boardService.findAll().stream()
                 .map(post -> new ResponseBoardListDto(post.getId(), post.getTitle(), post.getContent()
-                        , post.getMember().getNickName(), post.getCreatedDate(), post.getView().getViewCnt(),
+                        , post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(),
                         post.getView().getLikeCnt()))
                 .collect(Collectors.toList());
         model.addAttribute("boards", result);
@@ -95,7 +95,7 @@ public class BoardController {
         return boardService.getPostsBySearch(vo).stream()
                 .map(post -> new ResponseSearchConditionDto(post.getId(), post.getTitle(), post.getContent()
                         , post.getMember().getNickName(), post.getCreatedDate()
-                        , post.getView().getViewCnt(), post.getView().getLikeCnt()))
+                        , post.getViewCnt(), post.getView().getLikeCnt()))
                 .collect(Collectors.toList());
     }
 

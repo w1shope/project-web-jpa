@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
@@ -22,9 +23,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> getAllPosts(@Param(value = "loginId") String loginId);
 
     @Query(value = "select b from Board b join fetch b.view v where b.id = :boardId")
-    Board getBoardById(@Param("boardId") Long id);
+    Optional<Board> findBoardWithViewById(@Param(value = "boardId") Long id);
 
-//    @Modifying(clearAutomatically = true)
-//    @Query(value = "update Board b set b.view.viewCnt = b.view.viewCnt + 1 where b.id = :boardId")
-//    void increaseViewCnt(@Param(value = "boardId") Long id);
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update Board b set b.viewCnt = b.viewCnt + 1 where b.id = :boardId")
+    void increaseViewCnt(@Param(value = "boardId") Long id);
 }
