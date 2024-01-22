@@ -34,6 +34,18 @@
         correct {
             color: black;
         }
+
+        .id-input {
+            width: calc(40% - 10px);
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .input {
+            width: calc(80% - 10px);
+            display: inline-block;
+            margin-right: 12px;
+        }
     </style>
 </head>
 <body>
@@ -50,7 +62,8 @@
                         <a class="nav-link" href="#">Link</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                           aria-expanded="false">
                             Dropdown
                         </a>
                         <div class="dropdown-menu">
@@ -74,52 +87,86 @@
 </div>
 <div class="container mt-5">
     <form method="post" th:action="join" th:object="${joinMember}">
-        <div class="form-group">
+        <div class="form-group id-input">
             <label for="loginId">아이디:</label>
-            <input type="text" class="form-control" th:field="*{loginId}">
+            <div style="display: flex; justify-content: space-between;">
+                <input type="text" class="form-control" th:field="*{loginId}">
+                <button id="checkButton" class="btn btn-danger" style="width: 120px; margin-left: 10px"
+                        onclick="checkJoinIdDuplicate(event)">중복확인
+                </button>
+            </div>
             <div th:if="${#fields.hasErrors('loginId')}" class="not-correct">
                 <span th:errors="*{loginId}"></span>
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group input">
             <label for="password">비밀번호:</label>
             <input type="password" class="form-control" th:field="*{password}">
             <span th:if="${#fields.hasErrors('password')}" th:erros="*{password}"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group input">
             <label for="username">이름:</label>
             <input type="text" class="form-control" th:field="*{username}">
             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group input">
             <label for="nickName">닉네임:</label>
             <input type="text" class="form-control" th:field="*{nickName}">
             <span th:if="${#fields.hasErrors('nickName')}" th:errors="*{nickName}"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group input">
             <label for="email">이메일:</label>
             <input type="email" class="form-control" th:field="*{email}">
             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
         </div>
 
 
-        <div class="form-group">
+        <div class="form-group input">
             <label for="phone">전화번호:</label>
             <input type="tel" class="form-control" th:field="*{phone}">
             <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
         </div>
 
-        <button type="submit" class="btn btn-primary">가입하기</button>
+        <div>
+            <button type="submit" class="btn btn-primary">가입하기</button>
+        </div>
     </form>
 </div>
 <footer th:replace="~{footer :: footerFragment}"></footer>
+<script>
+    function checkJoinIdDuplicate(event) {
+        event.preventDefault();
+        var joinId = document.getElementById("loginId").value;
+        $.ajax({
+            url: "/join/checkId",
+            type: "POST",
+            data: JSON.stringify({"joinId": joinId}),
+            contentType: "application/json",
+            success: function (response) {
+                var result = response.available;
+                var button = document.getElementById("checkButton");
+                if (result) {
+                    button.innerHTML = "가입가능";
+                    button.classList.remove("btn-danger");
+                    button.classList.add("btn-success");
+                } else {
+                    document.getElementById("loginId").value = "";
+                    alert("중복되는 아이디입니다.");
+                }
+            },
+            error: function (error) {
+            }
+        });
+    }
+</script>
+
 
 <!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>

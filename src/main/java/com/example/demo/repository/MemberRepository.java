@@ -26,4 +26,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query(value = "select m from Member m left outer join fetch m.boards b where m.loginId = :loginId")
     Optional<Member> findBoardsWrittenByMe(@Param(value = "loginId") String loginId);
 
+    @Query(value = "select count(m) from Member m where m.loginId = :joinId")
+    int joinIdAvailability(@Param(value = "joinId") String joinId);
+
 }

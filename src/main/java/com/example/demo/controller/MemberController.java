@@ -5,6 +5,7 @@ import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.MemberService;
+import com.example.demo.vo.CheckJoinIdVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -165,5 +166,15 @@ public class MemberController {
             redirectAttributes.addAttribute("findFailed", ex.getMessage());
             return "redirect:/home";
         }
+    }
+
+    @ResponseBody
+    @PostMapping("/join/checkId")
+    public ResponseAvailabilityJoinDto checkDuplicateId(@RequestBody CheckJoinIdVO vo) {
+        int isDuplicate = memberService.checkDuplicateJoinId(vo);
+        log.info("duplicate={}", isDuplicate);
+        return new ResponseAvailabilityJoinDto(
+                isDuplicate == 0 ? true : false
+        );
     }
 }

@@ -4,6 +4,7 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
 import com.example.demo.repository.MemberRepository;
+import com.example.demo.vo.CheckJoinIdVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -82,5 +83,9 @@ public class MemberService {
         } catch (NoSuchElementException ex) {
             throw ex;
         }
+    }
+
+    public int checkDuplicateJoinId(CheckJoinIdVO vo) {
+        return memberRepository.joinIdAvailability(vo.getJoinId());
     }
 }
