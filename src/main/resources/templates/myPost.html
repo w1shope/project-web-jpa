@@ -17,18 +17,18 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" th:href="@{/home}">Home</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- 검색 버튼 우측 으로 고정 -->
-      <ul class="navbar-nav mr-auto">
-      </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
     </div>
   </nav>
 </div>
 <div class="container mt-5">
   <h2>게시물 목록</h2>
+  <div class="float-right">
+    <div class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="검색" id="searchText" name="searchText"
+             aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchBoardList()">검색</button>
+    </div>
+  </div>
   <table class="table">
     <thead>
     <tr>
@@ -58,6 +58,40 @@
   </table>
 </div>
 
+<script>
+  function searchBoardList() {
+    let searchTitle = $("#searchText").val();
+    // 기존의 게시물을 지우는 부분 추가
+    $("tbody").empty();
+    $.ajax({
+      type: "POST",
+      url: "/boards/search",
+      data: JSON.stringify({condition: searchTitle}),
+      contentType: "application/json",
+      // Controller로부터 받은 List를 화면에 뿌림
+      success: function (response) {
+        for (var i = 0; i < response.length; i++) {
+          var board = response[i];
+          // 데이터를 이용하여 화면에 표시하는 코드 작성
+          // 예시: 테이블의 tbody에 행을 추가하는 방식으로 데이터를 표시
+          var row = "<tr>" +
+                  "<td>" + board.boardId + "</td>" +
+                  "<td>" + board.title + "</td>" +
+                  "<td>" + board.content + "</td>" +
+                  "<td>" + board.nickName + "</td>" +
+                  "<td>" + board.createdDate + "</td>" +
+                  "<td>" + board.viewCnt + "</td>" +
+                  "<td>" + board.likeCnt + "</td>" +
+                  "<td><a href='/boards/" + board.boardId + "' class='btn btn-primary'>자세히 보기</a></td>" +
+                  "</tr>";
+          $("tbody").append(row);
+        }
+      },
+      error: function (error) {
+      }
+    });
+  }
+</script>
 <!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
