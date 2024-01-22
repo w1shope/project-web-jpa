@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시물 목록</title>
+    <!-- 부트스트랩 CDN 추가 -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 60px; /* 네비게이션 바 때문에 페이지 상단에 간격 추가 */
+        }
+    </style>
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" th:href="@{/home}">Home</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        </div>
+    </nav>
+</div>
+<div class="container mt-5">
+    <h2>게시물 목록</h2>
+    <div class="float-right">
+        <div class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="검색" id="searchText" name="searchText"
+                   aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchBoardList()">검색</button>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">내용</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+            <th scope="col">조회수</th>
+            <th scope="col">좋아요</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 각 행에 해당하는 데이터를 반복적으로 표시 -->
+        <tr th:each="board : ${boards}">
+            <th scope="row" th:text="${board.getBoardId()}">번호</th>
+            <td th:text="${board.getTitle()}">게시물 제목</td>
+            <td th:text="${board.getContent()}">게시물 내용</td>
+            <td th:text="${board.getNickName()}">작성자</td>
+            <td th:text="${board.getCreatedDate()}">작성일자</td>
+            <td th:text="${board.getViewCnt()}">조회수</td>
+            <td th:text="${board.getLikeCnt()}">좋아요</td>
+            <td><a th:href="@{/boards/{id}(id=${board.getBoardId()})}" class="btn btn-primary">자세히 보기</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    function searchBoardList() {
+        let searchTitle = $("#searchText").val();
+        // 기존의 게시물을 지우는 부분 추가
+        $("tbody").empty();
+        $.ajax({
+            type: "POST",
+            url: "/boards/search",
+            data: JSON.stringify({condition: searchTitle}),
+            contentType: "application/json",
+            // Controller로부터 받은 List를 화면에 뿌림
+            success: function (response) {
+                for (var i = 0; i < response.length; i++) {
+                    var board = response[i];
+                    // 데이터를 이용하여 화면에 표시하는 코드 작성
+                    // 예시: 테이블의 tbody에 행을 추가하는 방식으로 데이터를 표시
+                    var row = "<tr>" +
+                        "<td>" + board.boardId + "</td>" +
+                        "<td>" + board.title + "</td>" +
+                        "<td>" + board.content + "</td>" +
+                        "<td>" + board.nickName + "</td>" +
+                        "<td>" + board.createdDate + "</td>" +
+                        "<td>" + board.viewCnt + "</td>" +
+                        "<td>" + board.likeCnt + "</td>" +
+                        "<td><a href='/boards/" + board.boardId + "' class='btn btn-primary'>자세히 보기</a></td>" +
+                        "</tr>";
+                    $("tbody").append(row);
+                }
+            },
+            error: function (error) {
+            }
+        });
+    }
+</script>
+
+<!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

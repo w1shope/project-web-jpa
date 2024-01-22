@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시물 목록</title>
+  <!-- 부트스트랩 CDN 추가 -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 60px; /* 네비게이션 바 때문에 페이지 상단에 간격 추가 */
+    }
+  </style>
+</head>
+<body>
+<div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" th:href="@{/home}">Home</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- 검색 버튼 우측 으로 고정 -->
+      <ul class="navbar-nav mr-auto">
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+</div>
+<div class="container mt-5">
+  <h2>게시물 목록</h2>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">번호</th>
+      <th scope="col">제목</th>
+      <th scope="col">내용</th>
+      <th scope="col">작성자</th>
+      <th scope="col">작성일</th>
+      <th scope="col">조회수</th>
+      <th scope="col">좋아요</th>
+      <th scope="col">자세히 보기</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 각 행에 해당하는 데이터를 반복적으로 표시 -->
+    <tr th:each="board : ${boards}">
+      <th scope="row" th:text="${board.getBoardId()}">번호</th>
+      <td th:text="${board.getTitle()}">게시물 제목</td>
+      <td th:text="${board.getContent()}">게시물 내용</td>
+      <td th:text="${board.getNickName()}">작성자</td>
+      <td th:text="${board.getCreatedDate()}">작성일자</td>
+      <td th:text="${board.getViewCnt()}">조회수</td>
+      <td th:text="${board.getLikeCnt()}">좋아요</td>
+      <td><a th:href="@{/board/{id}(id=${board.getBoardId()})}" class="btn btn-primary">자세히 보기</a></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
