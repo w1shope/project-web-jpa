@@ -5,7 +5,6 @@ import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
-import com.example.demo.repository.MemberRepository;
 import com.example.demo.vo.SearchBoardConditionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +53,7 @@ public class BoardService {
     }
 
     public Board findBoard(Long id) {
-        return  boardRepository.findBoardWithViewById(id)
+        return  boardRepository.findBoardByBoardId(id)
                 .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 없습니다"));
     }
 
@@ -74,4 +73,15 @@ public class BoardService {
     public void increaseViewCnt(Board board) {
         boardRepository.increaseViewCnt(board.getId());
     }
+
+    @Transactional
+    public void increaseLikeCnt(Board board) {
+        boardRepository.increaseLikeCnt(board.getId());
+    }
+
+    @Transactional
+    public void decreaseLikeCnt(Board board) {
+        boardRepository.decreaseLikeCnt(board.getId());
+    }
+
 }

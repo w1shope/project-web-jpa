@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,8 @@ public class Member {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Board> boards = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
-    private List<View> view = new ArrayList<>();
+    private List<View> views = new ArrayList<>();
 }
 
 

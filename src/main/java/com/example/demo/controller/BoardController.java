@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
+import com.example.demo.entity.View;
 import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.MemberService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Controller
@@ -111,13 +113,39 @@ public class BoardController {
     /**
      * 게시물 좋아요
      */
-//    @ResponseBody
-//    @PostMapping("/boards/like")
-//    public ResponseBoardLikeDto getBoardLikeCnt(@RequestBody IncreaseLikeCntBoardVO vo,
-//                                                @SessionAttribute("loginId") String loginId) {
-//        Board board = boardService.findBoard(vo.getBoardId());
-//        Member loginMember = memberService.getLoginMember(loginId);
-//    }
+    @ResponseBody
+    @PostMapping("/boards/like")
+    public ResponseBoardLikeDto getBoardLikeCnt(@RequestBody IncreaseLikeCntBoardVO vo,
+                                                @SessionAttribute("loginId") String loginId) {
+        try {
+            Board board = boardService.findBoard(vo.getBoardId());
+            Member loginMember = memberService.getLoginMember(loginId);
+            View findView = viewService.getAll().stream()
+                    .filter(view -> view.getBoard().getId().equals(board.getId()))
+                    .filter(view -> view.getMember().getId().equals(loginMember.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (findView == null) {
+                View createView = View.builder()
+                        .board(board)
+                        .member(loginMember)
+                        .likeStatus(1)
+                        .build();
+                View savedView = viewRepository.save(createView);
+                boardService.increaseLikeCnt(savedView.getBoard());
+                return new ResponseBoardLikeDto(boardService.findBoard(savedView.getBoard().getId()).getLikeCnt());
+            } else {
+                if (findView.getLikeStatus() == 0) {
+                    viewService.increaseLikeCnt(findView);
+                } else {
+                    viewService.cancelLikeCnt(findView);
+                }
+            }
+            return new ResponseBoardLikeDto(boardService.findBoard(findView.getBoard().getId()).getLikeCnt());
+        } catch (NoSuchElementException ex) {
+            throw ex;
+        }
+    }
 
 }
 

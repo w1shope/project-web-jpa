@@ -30,7 +30,6 @@ public class Board {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "view_id")
-    private View view;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "board")
+    private List<View> views = new ArrayList<>();
 }

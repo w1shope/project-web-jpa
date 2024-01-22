@@ -55,13 +55,9 @@
             data: JSON.stringify({boardId: boardId}),
             contentType: "application/json",
             success: function (response) {
-                var nowLikeCnt = document.getElementById("likeCnt").value
-                if(nowLikeCnt != response.likeCnt) {
-                    document.getElementById("likeCnt").innerHTML = response.likeCnt
-                }
+                document.getElementById("likeCnt").innerHTML = response.likeCnt;
             },
             error: function (error) {
-
             }
         })
     }

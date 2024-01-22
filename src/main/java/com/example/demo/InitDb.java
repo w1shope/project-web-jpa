@@ -2,7 +2,6 @@ package com.example.demo;
 
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
-import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.ViewRepository;
@@ -46,11 +45,6 @@ public class InitDb {
                     .createdDate(LocalDateTime.now())
                     .build();
             memberRepository.save(member);
-
-            View view = View.builder()
-                    .member(member)
-                    .build();
-            viewRepository.save(view);
 
             Board board = Board.builder()
                     .title("titleA")

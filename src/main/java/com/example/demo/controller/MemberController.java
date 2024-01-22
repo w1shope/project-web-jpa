@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.MemberService;
@@ -154,8 +153,6 @@ public class MemberController {
     public String findAllBoardsWrittenByMe(@PathVariable("loginId") String loginId
             , RedirectAttributes redirectAttributes, Model model) {
         try {
-//            Member member = memberService.findBoardWrittenByMe(loginId);
-//            model.addAttribute("boards", member.getBoards());
             List<ResponseBoardListDto> result = boardService.getAllPosts(loginId).stream()
                     .map(post -> new ResponseBoardListDto(post.getId(), post.getTitle(), post.getContent(),
                             post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(), post.getLikeCnt()))
