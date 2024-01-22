@@ -31,7 +31,7 @@
         <textarea class="form-control" th:field="*{board.content}" rows="20" readonly></textarea>
     </div>
     <div class="mt-3">
-        <button onclick="clickLike()" class="btn btn-outline-danger mr-2">
+        <button onclick="clickLikeButton()" class="btn btn-outline-danger mr-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-heart-fill"
                  viewBox="0 0 16 16">
@@ -47,7 +47,7 @@
     </div>
 </div>
 <script>
-    function clickLike() {
+    function clickLikeButton() {
         let boardId = document.getElementById("boardId").value;
         $.ajax({
             type: "POST",
@@ -55,7 +55,10 @@
             data: JSON.stringify({boardId: boardId}),
             contentType: "application/json",
             success: function (response) {
-                document.getElementById("likeCnt").innerHTML = response.likeCnt;
+                var nowLikeCnt = document.getElementById("likeCnt").value
+                if(nowLikeCnt != response.likeCnt) {
+                    document.getElementById("likeCnt").innerHTML = response.likeCnt
+                }
             },
             error: function (error) {
 

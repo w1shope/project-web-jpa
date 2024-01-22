@@ -2,7 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.Member;
+import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.MemberService;
 import com.example.demo.service.ViewService;
 import com.example.demo.vo.IncreaseLikeCntBoardVO;
 import com.example.demo.vo.SearchBoardConditionVO;
@@ -25,6 +28,8 @@ public class BoardController {
 
     private final BoardService boardService;
     private final ViewService viewService;
+    private final ViewRepository viewRepository;
+    private final MemberService memberService;
 
     @GetMapping("/board")
     public String writePage(@ModelAttribute("board") RequestEnrolBoardDto request,
@@ -46,7 +51,7 @@ public class BoardController {
         Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
         boardService.increaseViewCnt(findBoard); // 조회수 증가
         ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
-                , findBoard.getContent(), findBoard.getView().getLikeCnt());
+                , findBoard.getContent(), findBoard.getLikeCnt());
         model.addAttribute("board", response);
         return "/view";
     }
@@ -59,7 +64,7 @@ public class BoardController {
         List<ResponseBoardListDto> result = boardService.findAll().stream()
                 .map(post -> new ResponseBoardListDto(post.getId(), post.getTitle(), post.getContent()
                         , post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(),
-                        post.getView().getLikeCnt()))
+                        post.getLikeCnt()))
                 .collect(Collectors.toList());
         model.addAttribute("boards", result);
         return "/boardList";
@@ -89,23 +94,30 @@ public class BoardController {
      * }
      */
 
+    /**
+     * 특정 게시물 조회
+     * 제목 기준
+     */
     @ResponseBody
     @PostMapping("/boards/search")
     public List<ResponseSearchConditionDto> getSearchedBoards(@RequestBody SearchBoardConditionVO vo) {
         return boardService.getPostsBySearch(vo).stream()
                 .map(post -> new ResponseSearchConditionDto(post.getId(), post.getTitle(), post.getContent()
                         , post.getMember().getNickName(), post.getCreatedDate()
-                        , post.getViewCnt(), post.getView().getLikeCnt()))
+                        , post.getViewCnt(), post.getLikeCnt()))
                 .collect(Collectors.toList());
     }
 
-    @ResponseBody
-    @PostMapping("/boards/like")
-    public ResponseBoardLikeDto getBoardLikeCnt(@RequestBody IncreaseLikeCntBoardVO vo) {
-        Board board = boardService.findBoard(vo.getBoardId());
-        viewService.increaseLikeCnt(board);
-        return new ResponseBoardLikeDto(board.getView().getLikeCnt());
-    }
+    /**
+     * 게시물 좋아요
+     */
+//    @ResponseBody
+//    @PostMapping("/boards/like")
+//    public ResponseBoardLikeDto getBoardLikeCnt(@RequestBody IncreaseLikeCntBoardVO vo,
+//                                                @SessionAttribute("loginId") String loginId) {
+//        Board board = boardService.findBoard(vo.getBoardId());
+//        Member loginMember = memberService.getLoginMember(loginId);
+//    }
 
 }
 

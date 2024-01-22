@@ -48,7 +48,6 @@ public class InitDb {
             memberRepository.save(member);
 
             View view = View.builder()
-                    .likeCnt(0)
                     .member(member)
                     .build();
             viewRepository.save(view);
@@ -59,8 +58,8 @@ public class InitDb {
                     .createdDate(LocalDateTime.now())
                     .editDate(LocalDateTime.now())
                     .viewCnt(0)
+                    .likeCnt(0)
                     .member(member)
-                    .view(view)
                     .build();
             boardRepository.save(board);
 

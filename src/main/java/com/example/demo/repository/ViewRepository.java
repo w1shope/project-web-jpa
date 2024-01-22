@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 public interface ViewRepository extends JpaRepository<View, Long> {
 
-    @Modifying(clearAutomatically = true)
-    @Query(value = "update View v set v.likeCnt = v.likeCnt + 1 where v.id = :viewId")
-    void increaseLikeCnt(@Param(value = "viewId") Long id);
+    @Query(value = "select v from View v join fetch v.member m where v.id = :viewId")
+    Optional<View> findViewWithMemberById(@Param(value = "viewId") Long id);
 }

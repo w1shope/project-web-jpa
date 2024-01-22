@@ -24,12 +24,13 @@ public class Board {
     private LocalDateTime createdDate; // 작성 일자
     private LocalDateTime editDate; // 수정 일자
     private long viewCnt; // 조회수
+    private long likeCnt; // 좋아요
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "view_id")
     private View view;
 }

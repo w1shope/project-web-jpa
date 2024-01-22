@@ -158,7 +158,7 @@ public class MemberController {
 //            model.addAttribute("boards", member.getBoards());
             List<ResponseBoardListDto> result = boardService.getAllPosts(loginId).stream()
                     .map(post -> new ResponseBoardListDto(post.getId(), post.getTitle(), post.getContent(),
-                            post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(), post.getView().getLikeCnt()))
+                            post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(), post.getLikeCnt()))
                     .collect(Collectors.toList());
             model.addAttribute("boards", result);
             return "/myPost";

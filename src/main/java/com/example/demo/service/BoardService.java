@@ -32,7 +32,6 @@ public class BoardService {
             Member loginMember = memberService.getLoginMember(request.getLoginId());
 
             View view = View.builder()
-                    .likeCnt(0)
                     .member(loginMember)
                     .build();
             viewService.save(view);
@@ -43,7 +42,7 @@ public class BoardService {
                     .createdDate(LocalDateTime.now())
                     .editDate(LocalDateTime.now())
                     .viewCnt(0)
-                    .view(view)
+                    .likeCnt(0)
                     .member(loginMember)
                     .build();
             boardRepository.save(board);

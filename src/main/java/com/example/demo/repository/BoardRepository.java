@@ -15,7 +15,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query(value = "select b from Board b join fetch b.view v join fetch b.member m")
     List<Board> findBoardAll();
 
-    @Query(value = "select b from Board b join fetch b.member m where b.title like concat('%', :searchTitle, '%')")
+    //    @Query(value = "select b from Board b join fetch b.member m where b.title like concat('%', :searchTitle, '%')")
+    @Query(value = "select b from Board b join fetch b.member m where lower(b.title) like lower(concat('%', :searchTitle, '%'))")
     List<Board> getPostsBySearch(@Param(value = "searchTitle") String searchTitle);
 
     @Query(value = "select b from Board b join fetch b.member m" +
@@ -28,4 +29,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "update Board b set b.viewCnt = b.viewCnt + 1 where b.id = :boardId")
     void increaseViewCnt(@Param(value = "boardId") Long id);
+
+
 }

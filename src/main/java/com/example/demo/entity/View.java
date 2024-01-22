@@ -18,11 +18,13 @@ public class View {
     @Column(name = "view_id")
     private Long id;
 
-    private long likeCnt; // 좋아요 개수
+    @Column(columnDefinition = "TINYINT")
+    private int clickLike; // 게시물 좋아요 클릭 여부
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "view")
-    private Board board;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "view")
+    private List<Board> boards = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 }
