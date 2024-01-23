@@ -4,10 +4,10 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
-import com.example.demo.file.FileStore;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.FileService;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.ViewService;
 import com.example.demo.vo.IncreaseLikeCntBoardVO;
@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
-import org.yaml.snakeyaml.util.UriEncoder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -46,6 +44,7 @@ public class BoardController {
     private final ViewRepository viewRepository;
     private final MemberService memberService;
     private final BoardRepository boardRepository;
+    private final FileService fileService;
 
     @GetMapping("/board")
     public String writePage(@ModelAttribute("board") RequestEnrolBoardDto request,
@@ -207,6 +206,24 @@ public class BoardController {
         boardService.updateBoard(request, file);
         redirectAttributes.addAttribute("boardId", request.getBoardId());
         return "redirect:/boards/{boardId}";
+    }
+
+    @ResponseBody
+    @DeleteMapping("/boards/{boardId}")
+    public String deleteBoard(@PathVariable("boardId") Long boardId,
+                              @RequestBody RequestDeleteBoardDto request) {
+        if (request.isDeleteCheck()) {
+            try {
+                Board findBoard = boardService.findBoard(boardId);
+                if (findBoard != null) {
+                    boardService.deleteBoard(boardId);
+                    fileService.removeFile(findBoard.getFile().getId());
+                }
+            } catch (NoSuchElementException ex) {
+                boardService.deleteBoard(boardId);
+            }
+        }
+        return "ok";
     }
 }
 

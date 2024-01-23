@@ -149,4 +149,9 @@ public class BoardService {
 
     }
 
+    @Transactional
+    public void deleteBoard(Long id) {
+        boardRepository.deleteBoardByBoardId(id);
+    }
+
 }

@@ -44,4 +44,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "update Board b set b.file = null where b.id = :boardId")
     void removeFile(@Param(value = "boardId") Long id);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "delete from Board b where b.id = :boardId")
+    void deleteBoardByBoardId(@Param(value = "boardId") Long id);
 }
