@@ -17,8 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -77,12 +79,12 @@ public class BoardController {
      */
     @PostMapping("/board")
     public String enrolBoard(@Valid @ModelAttribute("board") RequestEnrolBoardDto request, BindingResult bindingResult
-            , Model model) {
+            , Model model, @RequestParam("file") MultipartFile multipartFile) throws IOException {
         if (bindingResult.hasErrors()) {
             model.addAttribute("enrolFailed", "등록 실패");
             return "/board";
         }
-        Long savedId = boardService.save(request);
+        Long savedId = boardService.save(request, multipartFile);
         return "redirect:/boards/" + savedId;
     }
 

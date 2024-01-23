@@ -32,4 +32,8 @@ public class Board {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board")
     private List<View> views = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id")
+    File file;
 }

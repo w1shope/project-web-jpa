@@ -2,15 +2,20 @@ package com.example.demo.service;
 
 import com.example.demo.dto.RequestEnrolBoardDto;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.File;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
+import com.example.demo.file.FileStore;
+import com.example.demo.file.UploadFile;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.vo.SearchBoardConditionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,9 +29,11 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberService memberService;
     private final ViewService viewService;
+    private final FileStore fileStore;
+    private final FileService fileService;
 
     @Transactional
-    public Long save(RequestEnrolBoardDto request) {
+    public Long save(RequestEnrolBoardDto request, MultipartFile multipartFile) throws IOException {
         try {
             Member loginMember = memberService.getLoginMember(request.getLoginId());
 
@@ -34,6 +41,14 @@ public class BoardService {
                     .member(loginMember)
                     .build();
             viewService.save(view);
+
+            UploadFile uploadedFile = fileStore.storeFile(multipartFile);
+
+            File file = File.builder()
+                    .uploadFilename(uploadedFile.getUploadFilename())
+                    .storedFilePath(uploadedFile.getStoredFilePath())
+                    .build();
+            fileService.save(file);
 
             Board board = Board.builder()
                     .title(request.getTitle())
@@ -43,6 +58,7 @@ public class BoardService {
                     .viewCnt(0)
                     .likeCnt(0)
                     .member(loginMember)
+                    .file(file)
                     .build();
             boardRepository.save(board);
 
@@ -53,7 +69,7 @@ public class BoardService {
     }
 
     public Board findBoard(Long id) {
-        return  boardRepository.findBoardByBoardId(id)
+        return boardRepository.findBoardByBoardId(id)
                 .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 없습니다"));
     }
 
