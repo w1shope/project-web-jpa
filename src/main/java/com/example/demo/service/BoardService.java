@@ -69,7 +69,7 @@ public class BoardService {
     }
 
     public Board findBoard(Long id) {
-        return boardRepository.findBoardByBoardId(id)
+        return boardRepository.findBoardWithFileByBoardId(id)
                 .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 없습니다"));
     }
 

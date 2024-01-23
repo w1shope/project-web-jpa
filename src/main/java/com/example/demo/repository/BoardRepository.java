@@ -20,8 +20,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query(value = "select b from Board b join fetch b.member m where m.loginId = :loginId")
     List<Board> getAllPosts(@Param(value = "loginId") String loginId);
 
-    @Query(value = "select b from Board b where b.id = :boardId")
-    Optional<Board> findBoardByBoardId(@Param(value = "boardId") Long id);
+    @Query(value = "select b from Board b join fetch b.file f where b.id = :boardId")
+    Optional<Board> findBoardWithFileByBoardId(@Param(value = "boardId") Long id);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update Board b set b.viewCnt = b.viewCnt + 1 where b.id = :boardId")

@@ -11,4 +11,5 @@ public class ResponseViewBoardDto {
     private String title;
     private String content;
     private long likeCnt;
+    private String uploadFilename;
 }

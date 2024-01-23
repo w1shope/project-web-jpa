@@ -20,7 +20,7 @@ public class FileStore {
     /**
      * 파일이 저장되는 서버 경로 반환
      */
-    private String getStoredFullPath(String filename) {
+    public String getStoredFullPath(String filename) {
         return storeDirPath + filename;
     }
 

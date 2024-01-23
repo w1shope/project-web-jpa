@@ -4,6 +4,8 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
+import com.example.demo.file.FileStore;
+import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.MemberService;
@@ -13,14 +15,23 @@ import com.example.demo.vo.SearchBoardConditionVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriUtils;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -34,6 +45,7 @@ public class BoardController {
     private final ViewService viewService;
     private final ViewRepository viewRepository;
     private final MemberService memberService;
+    private final BoardRepository boardRepository;
 
     @GetMapping("/board")
     public String writePage(@ModelAttribute("board") RequestEnrolBoardDto request,
@@ -52,12 +64,21 @@ public class BoardController {
      */
     @GetMapping("/boards/{id}")
     public String viewBoard(@PathVariable("id") Long boardId, Model model) {
-        Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
-        boardService.increaseViewCnt(findBoard); // 조회수 증가
-        ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
-                , findBoard.getContent(), findBoard.getLikeCnt());
-        model.addAttribute("board", response);
-        return "/view";
+        try {
+            Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
+            boardService.increaseViewCnt(findBoard); // 조회수 증가
+            ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
+                    , findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename());
+            model.addAttribute("board", response);
+        } catch (NoSuchElementException ex) {
+            Board findBoard = boardRepository.findById(boardId).get(); // 게시물 찾기
+            boardService.increaseViewCnt(findBoard); // 조회수 증가
+            ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
+                    , findBoard.getContent(), findBoard.getLikeCnt(), null);
+            model.addAttribute("board", response);
+        } finally {
+            return "/view";
+        }
     }
 
     /**
@@ -149,6 +170,19 @@ public class BoardController {
         }
     }
 
+    @GetMapping("/boards/{boardId}/file")
+    public ResponseEntity<Resource> downloadFile(@PathVariable("boardId") Long boardId) throws MalformedURLException {
+        Board board = boardService.findBoard(boardId);
+        String storedFilePath = board.getFile().getStoredFilePath();
+        System.out.println("storedFilePath = " + storedFilePath);
+
+        UrlResource resource = new UrlResource("file:" + storedFilePath);
+        String encodeUploadFilename = UriUtils.encode(board.getFile().getUploadFilename(), StandardCharsets.UTF_8);
+        String contentDisposition = "attachment; filename=\"" + encodeUploadFilename + "\"";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(resource);
+    }
 }
 
 
