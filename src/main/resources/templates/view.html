@@ -48,9 +48,23 @@
             </svg>
             <span th:text="${board.getLikeCnt()}" id="likeCnt" name="likeCnt">좋아요 개수</span>
         </button>
-        <a th:href="@{/boards}">
-            <button class="btn btn-primary">게시물 목록</button>
+        <a th:href="@{/boards/{boardId}/update(boardId=${board.getBoardId()})}">
+            <button class="btn btn-primary">게시물 수정</button>
         </a>
+        <a th:href="@{/boards}">
+            <button class="btn btn-secondary">게시물 목록</button>
+        </a>
+    </div>
+
+    <!-- 댓글 작성 폼 -->
+    <div class="mt-4">
+        <form id="commentForm">
+            <div class="form-group">
+                <label for="commentContent">댓글 내용:</label>
+                <textarea class="form-control" id="commentContent" rows="3"></textarea>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="submitComment()">댓글 작성</button>
+        </form>
     </div>
 </div>
 <script>

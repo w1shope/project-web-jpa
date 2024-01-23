@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
-//@Builder
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board {
@@ -31,36 +31,13 @@ public class Board {
     private Member member;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board")
-//    private List<View> views = new ArrayList<>();
     private List<View> views;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     File file;
 
-    @Builder
-    public Board(String title, String content, LocalDateTime createdDate, LocalDateTime editDate, long viewCnt, long likeCnt, Member member, File file) {
-        this.title = title;
-        this.content = content;
-        this.createdDate = createdDate;
-        this.editDate = editDate;
-        this.viewCnt = viewCnt;
-        this.likeCnt = likeCnt;
-        this.member = member;
-        this.views = new ArrayList<>();
-        this.file = file;
-    }
-
-    @Builder
-    public Board(String title, String content, LocalDateTime createdDate, LocalDateTime editDate, long viewCnt, long likeCnt, Member member, List<View> views, File file) {
-        this.title = title;
-        this.content = content;
-        this.createdDate = createdDate;
-        this.editDate = editDate;
-        this.viewCnt = viewCnt;
-        this.likeCnt = likeCnt;
-        this.member = member;
-        this.views = views;
+    public void changeFile(File file) {
         this.file = file;
     }
 }

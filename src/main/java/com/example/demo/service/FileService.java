@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.RequestUpdateFileDto;
 import com.example.demo.entity.File;
 import com.example.demo.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,4 +18,15 @@ public class FileService {
     public Long save(File file) {
         return fileRepository.save(file).getId();
     }
+
+    @Transactional
+    public void changeFile(RequestUpdateFileDto request) {
+        fileRepository.changeFile(request.getFileId(), request.getUploadFilename(), request.getStoredFilePath());
+    }
+
+    @Transactional
+    public void removeFile(Long fileId) {
+        fileRepository.removeFile(fileId);
+    }
+
 }

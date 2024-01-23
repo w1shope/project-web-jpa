@@ -35,4 +35,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query(value = "update Board b set b.likeCnt = b.likeCnt - 1 where b.id = :boardId")
     void decreaseLikeCnt(@Param(value = "boardId") Long id);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update Board b set b.title = :title, b.content = :content, b.editDate = now()" +
+            " where b.id = :boardId")
+    void update(@Param(value = "boardId") Long id, @Param(value = "title") String title,
+                @Param(value = "content") String content);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update Board b set b.file = null where b.id = :boardId")
+    void removeFile(@Param(value = "boardId") Long id);
 }

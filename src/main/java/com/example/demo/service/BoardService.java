@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.RequestEnrolBoardDto;
+import com.example.demo.dto.RequestUpdateBoardDto;
+import com.example.demo.dto.RequestUpdateFileDto;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.File;
 import com.example.demo.entity.Member;
@@ -44,25 +46,40 @@ public class BoardService {
 
             UploadFile uploadedFile = fileStore.storeFile(multipartFile);
 
-            File file = File.builder()
-                    .uploadFilename(uploadedFile.getUploadFilename())
-                    .storedFilePath(uploadedFile.getStoredFilePath())
-                    .build();
-            fileService.save(file);
+            if (uploadedFile != null) {
+                File file = File.builder()
+                        .uploadFilename(uploadedFile.getUploadFilename())
+                        .storedFilePath(uploadedFile.getStoredFilePath())
+                        .build();
+                fileService.save(file);
 
-            Board board = Board.builder()
-                    .title(request.getTitle())
-                    .content(request.getContent())
-                    .createdDate(LocalDateTime.now())
-                    .editDate(LocalDateTime.now())
-                    .viewCnt(0)
-                    .likeCnt(0)
-                    .member(loginMember)
-                    .file(file)
-                    .build();
-            boardRepository.save(board);
+                Board board = Board.builder()
+                        .title(request.getTitle())
+                        .content(request.getContent())
+                        .createdDate(LocalDateTime.now())
+                        .editDate(LocalDateTime.now())
+                        .viewCnt(0)
+                        .likeCnt(0)
+                        .member(loginMember)
+                        .file(file)
+                        .build();
+                boardRepository.save(board);
+                return board.getId();
+            } else {
 
-            return board.getId();
+                Board board = Board.builder()
+                        .title(request.getTitle())
+                        .content(request.getContent())
+                        .createdDate(LocalDateTime.now())
+                        .editDate(LocalDateTime.now())
+                        .viewCnt(0)
+                        .likeCnt(0)
+                        .member(loginMember)
+                        .build();
+                boardRepository.save(board);
+                return board.getId();
+            }
+
         } catch (NoSuchElementException ex) {
             throw ex;
         }
@@ -98,6 +115,38 @@ public class BoardService {
     @Transactional
     public void decreaseLikeCnt(Board board) {
         boardRepository.decreaseLikeCnt(board.getId());
+    }
+
+    @Transactional
+    public void updateBoard(RequestUpdateBoardDto request, MultipartFile multipartFile) throws IOException {
+        boardRepository.update(request.getBoardId(), request.getTitle(), request.getContent());
+
+        UploadFile uploadedFile = fileStore.storeFile(multipartFile);
+        if (uploadedFile != null) {
+            File file = File.builder()
+                    .uploadFilename(uploadedFile.getUploadFilename())
+                    .storedFilePath(uploadedFile.getStoredFilePath())
+                    .build();
+            Board findBoard = boardRepository.findBoardWithFileByBoardId(request.getBoardId()).orElse(null);
+            if (findBoard != null) {
+                fileService.changeFile(new RequestUpdateFileDto(
+                        boardRepository.findBoardWithFileByBoardId(request.getBoardId()).get().getFile().getId(),
+                        file.getUploadFilename(),
+                        file.getStoredFilePath()
+                ));
+            } else {
+                fileService.save(file);
+                Board board = boardRepository.findById(request.getBoardId()).orElse(null);
+                board.changeFile(file);
+            }
+        } else {
+            Board findBoard = boardRepository.findBoardWithFileByBoardId(request.getBoardId()).orElse(null);
+            if (findBoard != null) {
+                boardRepository.removeFile(request.getBoardId());
+                fileService.removeFile(findBoard.getFile().getId());
+            }
+        }
+
     }
 
 }

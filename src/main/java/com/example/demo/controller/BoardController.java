@@ -183,6 +183,31 @@ public class BoardController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(resource);
     }
+
+    @GetMapping("/boards/{boardId}/update")
+    public String editPage(@PathVariable("boardId") Long id, Model model) {
+        try {
+            Board existFileBoard = boardService.findBoard(id);
+            RequestUpdateBoardDto request = new RequestUpdateBoardDto(existFileBoard.getId(), existFileBoard.getTitle()
+                    , existFileBoard.getContent(), existFileBoard.getFile());
+            model.addAttribute("board", request);
+        } catch (NoSuchElementException ex) {
+            Board notExistFileBoard = boardRepository.findById(id).get();
+            RequestUpdateBoardDto request = new RequestUpdateBoardDto(notExistFileBoard.getId(), notExistFileBoard.getTitle()
+                    , notExistFileBoard.getContent(), null);
+            model.addAttribute("board", request);
+        } finally {
+            return "/updateBoard";
+        }
+    }
+
+    @PatchMapping("/boards/{boardId}/update")
+    public String updateBoard(RequestUpdateBoardDto request, RedirectAttributes redirectAttributes,
+                              @RequestParam("uploadFile") MultipartFile file) throws IOException {
+        boardService.updateBoard(request, file);
+        redirectAttributes.addAttribute("boardId", request.getBoardId());
+        return "redirect:/boards/{boardId}";
+    }
 }
 
 

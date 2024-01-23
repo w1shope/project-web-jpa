@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.RequestUpdateFileDto;
 import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.ViewRepository;
@@ -37,4 +38,5 @@ public class ViewService {
         viewRepository.changeStatusToCancel(view.getId());
         boardRepository.decreaseLikeCnt(view.getBoard().getId());
     }
+
 }
