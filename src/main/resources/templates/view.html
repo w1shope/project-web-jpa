@@ -59,13 +59,24 @@
 
     <!-- 댓글 작성 폼 -->
     <div class="mt-4">
-        <form id="commentForm">
-            <div class="form-group">
-                <label for="commentContent">댓글 내용:</label>
-                <textarea class="form-control" id="commentContent" rows="3"></textarea>
+        <div class="form-group">
+            <textarea class="form-control" id="boardContent" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="writeComment()">댓글 작성</button>
+    </div>
+    <!-- 댓글 목록-->
+    <div th:each="comment: ${board.comments}" style="margin-top: 20px;" th:if="${board.getComments()}">
+        <div  class="border rounded" style="background-color: rgb(240, 240, 240);">
+            <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">작성자:<span
+                    th:text="${comment.getWriter()}"></span>
             </div>
-            <button type="button" class="btn btn-secondary" onclick="submitComment()">댓글 작성</button>
-        </form>
+            <div class="text-black-50" style="margin-left: 10px;">작성일자: <span th:text="${comment.getCreatedDate()}"></span>
+            </div>
+            <hr style="width: 650px;">
+            <div style="height: 100px">
+                <span th:text="${comment.getContent()}" style="margin-left: 10px;"></span>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -86,20 +97,38 @@
 
     function deleteBtn() {
         let deleteCheck = confirm("게시물을 삭제하시겠습니까?");
-        if(deleteCheck) {
+        if (deleteCheck) {
             $.ajax({
                 type: "delete",
                 url: "/boards/" + document.getElementById("boardId").value,
                 data: JSON.stringify({deleteCheck: true}),
                 contentType: "application/json",
-                success: function(res) {
+                success: function (res) {
                     alert("게시물이 정상적으로 식제되었습니다");
                     window.location.replace("/boards")
                 },
-                error: function(err) {
+                error: function (err) {
                 }
             })
         }
+    }
+
+    function writeComment() {
+        var content = $("#boardContent").val();
+        var boardId = $("#boardId").val();
+        $.ajax({
+            type: "POST",
+            url: "/boards/comment",
+            data: JSON.stringify({boardId: boardId, content: content}),
+            contentType: "application/json",
+            success: function (res) {
+                if (res) {
+                    window.location.replace("/boards/" + boardId);
+                }
+            },
+            error: function (err) {
+            }
+        })
     }
 </script>
 

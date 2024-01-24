@@ -3,6 +3,8 @@ package com.example.demo.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class ResponseViewBoardDto {
@@ -12,4 +14,6 @@ public class ResponseViewBoardDto {
     private String content;
     private long likeCnt;
     private String uploadFilename;
+    private List<ResponseCommentDto> comments;
+
 }

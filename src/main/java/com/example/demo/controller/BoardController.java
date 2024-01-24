@@ -2,16 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.Comment;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.ViewRepository;
-import com.example.demo.service.BoardService;
-import com.example.demo.service.FileService;
-import com.example.demo.service.MemberService;
-import com.example.demo.service.ViewService;
+import com.example.demo.service.*;
 import com.example.demo.vo.IncreaseLikeCntBoardVO;
 import com.example.demo.vo.SearchBoardConditionVO;
+import com.example.demo.vo.WriteCommentVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +45,7 @@ public class BoardController {
     private final MemberService memberService;
     private final BoardRepository boardRepository;
     private final FileService fileService;
+    private final CommentService commentService;
 
     @GetMapping("/board")
     public String writePage(@ModelAttribute("board") RequestEnrolBoardDto request,
@@ -66,14 +67,22 @@ public class BoardController {
         try {
             Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
             boardService.increaseViewCnt(findBoard); // 조회수 증가
+            List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
+                    .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
+                            c.getContent(), c.getCreatedDate(), c.getEditDate()))
+                    .collect(Collectors.toList());
             ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
-                    , findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename());
+                    , findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename(), comments);
             model.addAttribute("board", response);
         } catch (NoSuchElementException ex) {
             Board findBoard = boardRepository.findById(boardId).get(); // 게시물 찾기
             boardService.increaseViewCnt(findBoard); // 조회수 증가
+            List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
+                    .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
+                            c.getContent(), c.getCreatedDate(), c.getEditDate()))
+                    .collect(Collectors.toList());
             ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
-                    , findBoard.getContent(), findBoard.getLikeCnt(), null);
+                    , findBoard.getContent(), findBoard.getLikeCnt(), null, comments);
             model.addAttribute("board", response);
         } finally {
             return "/view";
@@ -223,6 +232,17 @@ public class BoardController {
                 boardService.deleteBoard(boardId);
             }
         }
+        return "ok";
+    }
+
+    @ResponseBody
+    @PostMapping("/boards/comment")
+    private String writeComment(@RequestBody WriteCommentVO vo,
+                              @SessionAttribute("loginId") String loginId) {
+        log.info("vo={}", vo);
+        Member member = memberService.getLoginMember(loginId);
+        Board board = boardRepository.findById(vo.getBoardId()).orElse(null);
+        commentService.save(vo, board, member);
         return "ok";
     }
 }
