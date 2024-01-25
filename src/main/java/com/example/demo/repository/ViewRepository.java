@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.Board;
 import com.example.demo.entity.View;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,4 +25,7 @@ public interface ViewRepository extends JpaRepository<View, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "update View v set v.likeStatus = 0 where v.id = :viewId")
     void changeStatusToCancel(@Param(value = "viewId") Long id);
+
+    @Query(value = "select v from View v join fetch v.board b")
+    List<View> findViewWithBoard();
 }

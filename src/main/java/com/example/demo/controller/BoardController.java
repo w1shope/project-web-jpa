@@ -146,13 +146,14 @@ public class BoardController {
     public ResponseBoardLikeDto getBoardLikeCnt(@RequestBody IncreaseLikeCntBoardVO vo,
                                                 @SessionAttribute("loginId") String loginId) {
         try {
-            Board board = boardService.findBoard(vo.getBoardId());
+            Board board = boardRepository.findById(vo.getBoardId()).orElse(null);
             Member loginMember = memberService.getLoginMember(loginId);
             View findView = viewService.getAll().stream()
                     .filter(view -> view.getBoard().getId().equals(board.getId()))
                     .filter(view -> view.getMember().getId().equals(loginMember.getId()))
                     .findFirst()
                     .orElse(null);
+            // 게시물의 좋아요가 0개일 때
             if (findView == null) {
                 View createView = View.builder()
                         .board(board)
@@ -161,18 +162,30 @@ public class BoardController {
                         .build();
                 View savedView = viewRepository.save(createView);
                 boardService.increaseLikeCnt(savedView.getBoard());
-                return new ResponseBoardLikeDto(boardService.findBoard(savedView.getBoard().getId()).getLikeCnt());
-            } else {
+                View view = getViewWithBoard(vo);
+                return new ResponseBoardLikeDto(view.getBoard().getLikeCnt());
+            }
+            // 게시물의 좋아요가 1개 이상일 때
+            else {
                 if (findView.getLikeStatus() == 0) {
                     viewService.increaseLikeCnt(findView);
                 } else {
                     viewService.cancelLikeCnt(findView);
                 }
             }
-            return new ResponseBoardLikeDto(boardService.findBoard(findView.getBoard().getId()).getLikeCnt());
+            View view = getViewWithBoard(vo);
+            return new ResponseBoardLikeDto(view.getBoard().getLikeCnt());
         } catch (NoSuchElementException ex) {
             throw ex;
         }
+    }
+
+    private View getViewWithBoard(IncreaseLikeCntBoardVO vo) {
+        View view = viewService.findViewWithBoard().stream()
+                .filter(v -> v.getBoard().getId().equals(vo.getBoardId()))
+                .findFirst()
+                .orElse(null);
+        return view;
     }
 
     @GetMapping("/boards/{boardId}/file")
@@ -277,7 +290,7 @@ public class BoardController {
                     .orElseThrow(NoSuchElementException::new);
             commentService.updateComment(comment, vo.getNewContent());
             return "ok";
-        } catch(NoSuchElementException ex) {
+        } catch (NoSuchElementException ex) {
             log.info("error={}", ex);
             throw ex;
         }

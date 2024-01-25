@@ -153,5 +153,4 @@ public class BoardService {
     public void deleteBoard(Long id) {
         boardRepository.deleteBoardByBoardId(id);
     }
-
 }
