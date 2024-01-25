@@ -65,7 +65,7 @@
         <button type="button" class="btn btn-secondary" onclick="writeComment()">댓글 작성</button>
     </div>
     <!-- 댓글 목록-->
-    <div th:each="comment, commentState: ${board.comments}" style="margin-top: 20px;" th:if="${board.getComments()}">
+    <div th:each="comment, commentState: ${board.comments}" style="margin-top: 20px; margin-bottom: 20px;" th:if="${board.getComments()}">
         <div class="border rounded" style="background-color: rgb(240, 240, 240); position:relative;">
             <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">
                 작성자:<span th:text="${comment.getWriter()}"></span>
@@ -75,8 +75,8 @@
                             index></span>
             </div>
             <div class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
-                <button onclick="editComment()">수정</button>
-                <button th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
+                <button class="btn btn-primary" onclick="editComment()">수정</button>
+                <button class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
             </div>
             <hr style="width: 650px;">
             <div style="height: 100px">
