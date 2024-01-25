@@ -74,9 +74,9 @@
                 작성일자: <span th:text="${comment.getCreatedDate()}" th:id="|commentCreatedDate${commentState.index}|"></span>
             </div>
             <div class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
-                <button id="editRequestBtn" class="btn btn-primary" th:onclick="readOnlyAttrRemove([[${commentState.index}]])">수정</button>
-                <button id="removeRequestBtn" class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
-                <button id="editSuccessBtn" class="btn btn-success" style="display: none" th:onclick="editContent([[${commentState.index}]])">수정완료</button>
+                <button th:id="|editRequestBtn${commentState.index}|" class="btn btn-primary" th:onclick="readOnlyAttrRemove([[${commentState.index}]])">수정</button>
+                <button th:id="|removeRequestBtn${commentState.index}|" class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
+                <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none" th:onclick="editContent([[${commentState.index}]])">수정완료</button>
             </div>
             <hr style="width: 650px;">
             <div style="height: 100px">
@@ -169,9 +169,9 @@
     function readOnlyAttrRemove(index) {
         document.getElementById("commentContent" + index).readOnly = false;
         document.getElementById("commentContent" + index).style.backgroundColor = "rgb(255, 255, 255)";
-        document.getElementById("editRequestBtn").style.display = "none";
-        document.getElementById("removeRequestBtn").style.display = "none";
-        document.getElementById("editSuccessBtn").style.display = "block";
+        document.getElementById("editRequestBtn" + index).style.display = "none";
+        document.getElementById("removeRequestBtn" + index).style.display = "none";
+        document.getElementById("editSuccessBtn" + index).style.display = "block";
     }
 
     function editContent(index) {
