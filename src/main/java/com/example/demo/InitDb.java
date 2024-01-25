@@ -39,8 +39,8 @@ public class InitDb {
             Member member = Member.builder()
                     .loginId("test")
                     .password("test!")
-                    .username("이희망")
-                    .nickName("호프")
+                    .username("테스트")
+                    .nickName("운영자")
                     .email("test@gmail.com")
                     .phone("010-1234-5678")
                     .createdDate(LocalDateTime.now())
@@ -58,6 +58,17 @@ public class InitDb {
                     .build();
             boardRepository.save(board);
 
+
+            Member member2 = Member.builder()
+                    .loginId("dlgmlakd6503")
+                    .password("Dlgmlakd01!@")
+                    .username("이희망")
+                    .nickName("호프")
+                    .email("a94496503@gmail.com")
+                    .phone("010-9449-6503")
+                    .createdDate(LocalDateTime.now())
+                    .build();
+            memberRepository.save(member2);
         }
     }
 }
