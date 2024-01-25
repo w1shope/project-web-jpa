@@ -2,7 +2,6 @@ package com.example.demo;
 
 import com.example.demo.entity.Member;
 import com.example.demo.service.MemberService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -29,7 +28,7 @@ public class HomeController {
         try {
             Member loginMember = memberService.getLoginMember(loginId);
             model.addAttribute("loginMember", loginMember);
-        } catch(NoSuchElementException ex) {
+        } catch (NoSuchElementException ex) {
         }
         log.info("session = {}", loginId);
         return "/home";
