@@ -51,7 +51,7 @@
         <a th:href="@{/boards/{boardId}/update(boardId=${board.getBoardId()})}">
             <button class="btn btn-primary">게시물 수정</button>
         </a>
-        <button class="btn btn-danger" onclick="deleteBtn()">게시물 삭제</button>
+        <button class="btn btn-danger" onclick="deleteBoardBtn()">게시물 삭제</button>
         <a th:href="@{/boards}">
             <button class="btn btn-secondary">게시물 목록</button>
         </a>
@@ -65,16 +65,23 @@
         <button type="button" class="btn btn-secondary" onclick="writeComment()">댓글 작성</button>
     </div>
     <!-- 댓글 목록-->
-    <div th:each="comment: ${board.comments}" style="margin-top: 20px;" th:if="${board.getComments()}">
-        <div  class="border rounded" style="background-color: rgb(240, 240, 240);">
-            <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">작성자:<span
-                    th:text="${comment.getWriter()}"></span>
+    <div th:each="comment, commentState: ${board.comments}" style="margin-top: 20px;" th:if="${board.getComments()}">
+        <div class="border rounded" style="background-color: rgb(240, 240, 240); position:relative;">
+            <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">
+                작성자:<span th:text="${comment.getWriter()}"></span>
             </div>
-            <div class="text-black-50" style="margin-left: 10px;">작성일자: <span th:text="${comment.getCreatedDate()}"></span>
+            <div class="text-black-50" style="margin-left: 10px;">
+                작성일자: <span th:text="${comment.getCreatedDate()}" th:id="|commentCreatedDate${commentState.index}|"
+                            index></span>
+            </div>
+            <div class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
+                <button onclick="editComment()">수정</button>
+                <button th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
             </div>
             <hr style="width: 650px;">
             <div style="height: 100px">
-                <span th:text="${comment.getContent()}" style="margin-left: 10px;"></span>
+                <span th:text="${comment.getContent()}" style="margin-left: 10px;"
+                      th:id="|commentContent${commentState.index}|">작성내용</span>
             </div>
         </div>
     </div>
@@ -95,7 +102,7 @@
         })
     }
 
-    function deleteBtn() {
+    function deleteBoardBtn() {
         let deleteCheck = confirm("게시물을 삭제하시겠습니까?");
         if (deleteCheck) {
             $.ajax({
@@ -129,6 +136,33 @@
             error: function (err) {
             }
         })
+    }
+
+    function deleteComment(index) {
+        var checkBtn = confirm("댓글을 삭제하시겠습니까?");
+        if (checkBtn) {
+            var boardId = $("#boardId").val();
+            var commentCreatedDate = document.getElementById("commentCreatedDate" + index).innerHTML;
+            var commentContent = document.getElementById("commentContent" + index).innerHTML;
+            $.ajax({
+                type: "DELETE",
+                url: "/boards/comment",
+                data: JSON.stringify({
+                    boardId: boardId, commentCreatedDate: commentCreatedDate
+                    , commentContent: commentContent
+                }),
+                contentType: "application/json",
+                success: function (res) {
+                    if (res) {
+                        alert("댓글이 정상적으로 삭제되었습니다");
+                        window.location.replace("/boards/" + boardId);
+                    }
+                },
+                error: function (err) {
+
+                }
+            })
+        }
     }
 </script>
 

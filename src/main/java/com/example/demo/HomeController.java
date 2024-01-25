@@ -19,6 +19,11 @@ public class HomeController {
 
     private final MemberService memberService;
 
+    @GetMapping("/")
+    public String index() {
+        return "redirect:/home";
+    }
+
     @GetMapping("/home")
     public String home(@SessionAttribute(name = "loginId", required = false) String loginId, Model model) {
         try {

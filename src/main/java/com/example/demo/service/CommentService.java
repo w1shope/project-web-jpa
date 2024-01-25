@@ -4,6 +4,7 @@ import com.example.demo.dto.ResponseCommentDto;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Comment;
 import com.example.demo.entity.Member;
+import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.vo.WriteCommentVO;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,9 @@ public class CommentService {
 
     public List<Comment> findCommentWithMemberAndBoard() {
         return commentRepository.findCommentWithMemberAndBoard();
+    }
+
+    public void deleteComment(Comment comment) {
+        commentRepository.deleteComment(comment.getId());
     }
 }

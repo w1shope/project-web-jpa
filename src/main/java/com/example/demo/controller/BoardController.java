@@ -6,9 +6,9 @@ import com.example.demo.entity.Comment;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
-import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.*;
+import com.example.demo.vo.DeleteCommentVO;
 import com.example.demo.vo.IncreaseLikeCntBoardVO;
 import com.example.demo.vo.SearchBoardConditionVO;
 import com.example.demo.vo.WriteCommentVO;
@@ -243,6 +243,22 @@ public class BoardController {
         Member member = memberService.getLoginMember(loginId);
         Board board = boardRepository.findById(vo.getBoardId()).orElse(null);
         commentService.save(vo, board, member);
+        return "ok";
+    }
+
+    @ResponseBody
+    @DeleteMapping("/boards/comment")
+    public String deleteComment(@RequestBody DeleteCommentVO vo,
+                                @SessionAttribute("loginId") String loginId) {
+        log.info("vo={}", vo);
+        Comment comment = commentService.findCommentWithMemberAndBoard().stream()
+                .filter(c -> c.getContent().equals(vo.getCommentContent()))
+                .filter(c -> c.getCreatedDate().equals(vo.getCommentCreatedDate()))
+                .filter(c -> c.getBoard().getId().equals(vo.getBoardId()))
+                .filter(c -> c.getMember().getLoginId().equals(loginId))
+                .findFirst()
+                .orElse(null);
+        commentService.deleteComment(comment);
         return "ok";
     }
 }

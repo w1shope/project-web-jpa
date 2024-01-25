@@ -38,9 +38,9 @@ public class InitDb {
         public void initService() {
             Member member = Member.builder()
                     .loginId("test")
-                    .password("test")
-                    .username("test")
-                    .nickName("test")
+                    .password("test!")
+                    .username("이희망")
+                    .nickName("호프")
                     .email("test@gmail.com")
                     .phone("010-1234-5678")
                     .createdDate(LocalDateTime.now())
