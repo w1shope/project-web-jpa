@@ -39,7 +39,7 @@
     </div>
 
     <div class="mt-3">
-        <button onclick="clickLikeButton()" class="btn btn-outline-danger mr-2">
+        <button onclick="clickLikeButton()" class="btn btn-outline-danger">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-heart-fill"
                  viewBox="0 0 16 16">
@@ -73,7 +73,7 @@
             <div class="text-black-50" style="margin-left: 10px;">
                 작성일자: <span th:text="${comment.getCreatedDate()}" th:id="|commentCreatedDate${commentState.index}|"></span>
             </div>
-            <div class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
+            <div th:if="${loginMember.getNickName().equals(comment.getWriter())}" class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
                 <button th:id="|editRequestBtn${commentState.index}|" class="btn btn-primary" th:onclick="readOnlyAttrRemove([[${commentState.index}]])">수정</button>
                 <button th:id="|removeRequestBtn${commentState.index}|" class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
                 <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none" th:onclick="editContent([[${commentState.index}]])">수정완료</button>

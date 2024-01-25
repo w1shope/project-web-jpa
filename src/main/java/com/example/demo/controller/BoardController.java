@@ -60,9 +60,11 @@ public class BoardController {
      * 게시물 상세 보기
      */
     @GetMapping("/boards/{id}")
-    public String viewBoard(@PathVariable("id") Long boardId, Model model) {
+    public String viewBoard(@PathVariable("id") Long boardId, Model model,
+                            @SessionAttribute("loginId") String loginId) {
         try {
             Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
+            Member loginMember = memberService.getLoginMember(loginId);
             boardService.increaseViewCnt(findBoard); // 조회수 증가
             List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
                     .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
@@ -71,6 +73,7 @@ public class BoardController {
             ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
                     , findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename(), comments);
             model.addAttribute("board", response);
+            model.addAttribute("loginMember", loginMember);
         } catch (NoSuchElementException ex) {
             Board findBoard = boardRepository.findById(boardId).get(); // 게시물 찾기
             boardService.increaseViewCnt(findBoard); // 조회수 증가
@@ -81,6 +84,7 @@ public class BoardController {
             ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
                     , findBoard.getContent(), findBoard.getLikeCnt(), null, comments);
             model.addAttribute("board", response);
+            model.addAttribute("loginMember", memberService.getLoginMember(loginId));
         } finally {
             return "/view";
         }
