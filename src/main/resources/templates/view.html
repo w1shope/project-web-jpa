@@ -71,17 +71,18 @@
                 작성자:<span th:text="${comment.getWriter()}"></span>
             </div>
             <div class="text-black-50" style="margin-left: 10px;">
-                작성일자: <span th:text="${comment.getCreatedDate()}" th:id="|commentCreatedDate${commentState.index}|"
-                            index></span>
+                작성일자: <span th:text="${comment.getCreatedDate()}" th:id="|commentCreatedDate${commentState.index}|"></span>
             </div>
             <div class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
-                <button class="btn btn-primary" onclick="editComment()">수정</button>
-                <button class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
+                <button id="editRequestBtn" class="btn btn-primary" th:onclick="readOnlyAttrRemove([[${commentState.index}]])">수정</button>
+                <button id="removeRequestBtn" class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
+                <button id="editSuccessBtn" class="btn btn-success" style="display: none" th:onclick="editContent([[${commentState.index}]])">수정완료</button>
             </div>
             <hr style="width: 650px;">
             <div style="height: 100px">
-                <span th:text="${comment.getContent()}" style="margin-left: 10px;"
-                      th:id="|commentContent${commentState.index}|">작성내용</span>
+                <textarea th:text="${comment.getContent()}" style="margin-left: 10px; width: 780px;
+                 border: none; outline: none; resize: none; background-color: rgb(240, 240, 240);"
+                          th:id="|commentContent${commentState.index}|" readonly>작성내용</textarea>
             </div>
         </div>
     </div>
@@ -163,6 +164,35 @@
                 }
             })
         }
+    }
+
+    function readOnlyAttrRemove(index) {
+        document.getElementById("commentContent" + index).readOnly = false;
+        document.getElementById("commentContent" + index).style.backgroundColor = "rgb(255, 255, 255)";
+        document.getElementById("editRequestBtn").style.display = "none";
+        document.getElementById("removeRequestBtn").style.display = "none";
+        document.getElementById("editSuccessBtn").style.display = "block";
+    }
+
+    function editContent(index) {
+        var boardId = document.getElementById("boardId").value;
+        var newContent = document.getElementById("commentContent" + index).value;
+        var createdDate = document.getElementById("commentCreatedDate" + index).innerHTML;
+        $.ajax({
+            type: "PATCH",
+            url: "/boards/comment",
+            data: JSON.stringify({boardId: boardId, newContent: newContent, commentCreatedDate: createdDate}),
+            contentType: "application/json",
+            success: function(res) {
+                if(res) {
+                    alert("댓글이 정상적으로 수정되었습니다");
+                    window.location.replace("/boards/" + boardId);
+                }
+            },
+            error: function(err) {
+
+            }
+        })
     }
 </script>
 

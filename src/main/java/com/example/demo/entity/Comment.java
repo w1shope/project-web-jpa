@@ -28,4 +28,9 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void updateContent(String content) {
+        this.content = content;
+        this.editDate = LocalDateTime.now();
+    }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -39,5 +39,10 @@ public class CommentService {
 
     public void deleteComment(Comment comment) {
         commentRepository.deleteComment(comment.getId());
+    }
+
+    @Transactional
+    public void updateComment(Comment comment, String updateContent) {
+        comment.updateContent(updateContent);
     }
 }

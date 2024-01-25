@@ -8,10 +8,7 @@ import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.*;
-import com.example.demo.vo.DeleteCommentVO;
-import com.example.demo.vo.IncreaseLikeCntBoardVO;
-import com.example.demo.vo.SearchBoardConditionVO;
-import com.example.demo.vo.WriteCommentVO;
+import com.example.demo.vo.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -238,8 +235,7 @@ public class BoardController {
     @ResponseBody
     @PostMapping("/boards/comment")
     private String writeComment(@RequestBody WriteCommentVO vo,
-                              @SessionAttribute("loginId") String loginId) {
-        log.info("vo={}", vo);
+                                @SessionAttribute("loginId") String loginId) {
         Member member = memberService.getLoginMember(loginId);
         Board board = boardRepository.findById(vo.getBoardId()).orElse(null);
         commentService.save(vo, board, member);
@@ -250,7 +246,6 @@ public class BoardController {
     @DeleteMapping("/boards/comment")
     public String deleteComment(@RequestBody DeleteCommentVO vo,
                                 @SessionAttribute("loginId") String loginId) {
-        log.info("vo={}", vo);
         Comment comment = commentService.findCommentWithMemberAndBoard().stream()
                 .filter(c -> c.getContent().equals(vo.getCommentContent()))
                 .filter(c -> c.getCreatedDate().equals(vo.getCommentCreatedDate()))
@@ -260,6 +255,32 @@ public class BoardController {
                 .orElse(null);
         commentService.deleteComment(comment);
         return "ok";
+    }
+
+    /**
+     * 댓글 작성자 loginId, 게시물 id, 댓글 id
+     * 댓글 수정 날짜 변경
+     *
+     * @return
+     */
+    @ResponseBody
+    @PatchMapping("/boards/comment")
+    public String editComment(@RequestBody EditCommentVO vo,
+                              @SessionAttribute("loginId") String loginId) {
+        try {
+            Member loginMember = memberService.getLoginMember(loginId);
+            Comment comment = commentService.findCommentWithMemberAndBoard().stream()
+                    .filter(c -> c.getCreatedDate().equals(vo.getCommentCreatedDate()))
+                    .filter(c -> c.getBoard().getId().equals(vo.getBoardId()))
+                    .filter(c -> c.getMember().getLoginId().equals(loginMember.getLoginId()))
+                    .findFirst()
+                    .orElseThrow(NoSuchElementException::new);
+            commentService.updateComment(comment, vo.getNewContent());
+            return "ok";
+        } catch(NoSuchElementException ex) {
+            log.info("error={}", ex);
+            throw ex;
+        }
     }
 }
 
