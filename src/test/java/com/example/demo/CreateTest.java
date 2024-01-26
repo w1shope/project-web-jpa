@@ -6,6 +6,8 @@ import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.ViewRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +15,7 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @SpringBootTest
 @Transactional
@@ -25,40 +28,41 @@ public class CreateTest {
     BoardRepository boardRepository;
     @Autowired
     ViewRepository viewRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     void test() {
-//        Member member = Member.builder()
-//                .loginId("test")
-//                .password("test")
-//                .email("test@naver.com")
-//                .createdDate(LocalDateTime.now())
-//                .phone("010-1234-5667")
-//                .nickName("test")
-//                .username("test")
-//                .build();
-//
-//        View view = View.builder()
-//                .member(member)
-//                .build();
-//
-//        Board board = Board.builder()
-//                .title("test")
-//                .content("test")
-//                .viewCnt(0)
-//                .likeCnt(0)
-//                .createdDate(LocalDateTime.now())
-//                .editDate(LocalDateTime.now())
-//                .member(member)
-////                .view(view)
-//                .build();
-//
-//        memberRepository.save(member);
-//        boardRepository.save(board);
-//        viewRepository.save(view);
-//
-//        Board board1 = boardRepository.findById(board.getId()).get();
-//        System.out.println("board1 = " + board1.getView());
 
+        View view = View.builder()
+                .likeStatus(0)
+                .build();
+
+        Board board = Board.builder()
+                .title("titleA")
+                .content("contentA")
+                .createdDate(LocalDateTime.now())
+                .editDate(LocalDateTime.now())
+                .viewCnt(0)
+                .likeCnt(0)
+                .views(new ArrayList<>())
+                .build();
+
+        Member member = Member.builder()
+                .loginId("test")
+                .password("test")
+                .username("test")
+                .nickName("test")
+                .email("test")
+                .phone("test")
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        view.relationToMember(member);
+        view.relationToBoard(board);
+        board.relationToMember(member);
+        memberRepository.save(member);
+
+        em.remove(member); // em = EntityManager
     }
 }
