@@ -301,7 +301,7 @@ public class BoardController {
     }
 
     @ResponseBody
-    @PostMapping("/boards/comment/likecnt")
+    @PostMapping("/comments/like")
     public ResponseCommentLikeCntDto updateCommentLikeCnt(@RequestBody UpdateCommentLikeCntVO vo,
                                                           @SessionAttribute("loginId") String loginId) {
         Member loginMember = memberService.getLoginMember(loginId);
