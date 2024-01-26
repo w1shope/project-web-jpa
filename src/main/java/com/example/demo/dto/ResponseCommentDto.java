@@ -13,4 +13,5 @@ public class ResponseCommentDto {
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime editDate;
+    private long likeCnt;
 }

@@ -20,6 +20,7 @@ public class Comment {
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime editDate;
+    private long likeCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
@@ -32,5 +33,13 @@ public class Comment {
     public void updateContent(String content) {
         this.content = content;
         this.editDate = LocalDateTime.now();
+    }
+
+    public void increaseLikeCnt() {
+        this.likeCnt += 1;
+    }
+
+    public void decreaseLikeCnt() {
+        this.likeCnt -= 1;
     }
 }

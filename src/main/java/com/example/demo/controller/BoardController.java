@@ -1,11 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.Board;
-import com.example.demo.entity.Comment;
-import com.example.demo.entity.Member;
-import com.example.demo.entity.View;
+import com.example.demo.entity.*;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.ViewCommentRepository;
 import com.example.demo.repository.ViewRepository;
 import com.example.demo.service.*;
 import com.example.demo.vo.*;
@@ -43,6 +41,8 @@ public class BoardController {
     private final BoardRepository boardRepository;
     private final FileService fileService;
     private final CommentService commentService;
+    private final ViewCommentService viewCommentService;
+    private final ViewCommentRepository viewCommentRepository;
 
     @GetMapping("/board")
     public String writePage(@ModelAttribute("board") RequestEnrolBoardDto request,
@@ -68,7 +68,7 @@ public class BoardController {
             boardService.increaseViewCnt(findBoard); // 조회수 증가
             List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
                     .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
-                            c.getContent(), c.getCreatedDate(), c.getEditDate()))
+                            c.getContent(), c.getCreatedDate(), c.getEditDate(), c.getLikeCnt()))
                     .collect(Collectors.toList());
             ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
                     , findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename(), comments);
@@ -79,7 +79,7 @@ public class BoardController {
             boardService.increaseViewCnt(findBoard); // 조회수 증가
             List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
                     .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
-                            c.getContent(), c.getCreatedDate(), c.getEditDate()))
+                            c.getContent(), c.getCreatedDate(), c.getEditDate(), c.getLikeCnt()))
                     .collect(Collectors.toList());
             ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
                     , findBoard.getContent(), findBoard.getLikeCnt(), null, comments);
@@ -298,6 +298,40 @@ public class BoardController {
             log.info("error={}", ex);
             throw ex;
         }
+    }
+
+    @ResponseBody
+    @PostMapping("/boards/comment/likecnt")
+    public ResponseCommentLikeCntDto updateCommentLikeCnt(@RequestBody UpdateCommentLikeCntVO vo,
+                                                          @SessionAttribute("loginId") String loginId) {
+        Member loginMember = memberService.getLoginMember(loginId);
+        Comment findComment = commentService.findCommentWithMemberAndBoardForLikeCnt
+                        (vo.getCommentWriter(), vo.getCommentContent(), vo.getCommentCreatedDate())
+                .orElse(null);
+        ViewComment findViewComment = viewCommentService.findViewCommentWithMemberAndComment(loginMember, findComment)
+                .orElse(null);
+        if (findViewComment == null) {
+            ViewComment createViewComment = ViewComment.builder()
+                    .likeStatus(0)
+                    .comment(findComment)
+                    .member(loginMember)
+                    .build();
+            viewCommentRepository.save(createViewComment);
+            viewCommentService.changeLikeState(createViewComment); // 댓글 좋아요 상태 변경, 0 -> 1
+            commentService.increaseLikeCnt(createViewComment.getComment()); // 댓글 좋아요 개수 1 감소
+        } else {
+            // 좋아요를 누른 상태
+            if (findViewComment.getLikeStatus() == 1) {
+                commentService.decreaseLikeCnt(findViewComment.getComment()); // 댓글 좋아요 개수 1 감소
+                viewCommentService.changeLikeState(findViewComment); // 좋아요 상태 변경, 1 -> 0
+            }
+            // 좋아요 누르지 않은 상태
+            else {
+                commentService.increaseLikeCnt(findViewComment.getComment()); // 댓글 좋아요 개수 1 증가
+                viewCommentService.changeLikeState(findViewComment); // 좋아요 상태 변경, 0 -> 1
+            }
+        }
+        return new ResponseCommentLikeCntDto(findComment.getLikeCnt());
     }
 }
 

@@ -15,5 +15,4 @@ public class ResponseViewBoardDto {
     private long likeCnt;
     private String uploadFilename;
     private List<ResponseCommentDto> comments;
-
 }

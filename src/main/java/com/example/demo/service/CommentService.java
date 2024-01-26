@@ -1,10 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ResponseCommentDto;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.Comment;
 import com.example.demo.entity.Member;
-import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.vo.WriteCommentVO;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,4 +44,23 @@ public class CommentService {
     public void updateComment(Comment comment, String updateContent) {
         comment.updateContent(updateContent);
     }
+
+    public Optional<Comment> findCommentWithMemberAndBoardForLikeCnt(String nickName, String content, LocalDateTime createdDate) {
+        return commentRepository.findCommentWithMemberAndBoardForLikeCnt(nickName, content, createdDate);
+    }
+
+    @Transactional
+    public void increaseLikeCnt(Comment comment) {
+        comment.increaseLikeCnt();
+    }
+
+    @Transactional
+    public void decreaseLikeCnt(Comment comment) {
+        comment.decreaseLikeCnt();
+    }
+
+    public long getCommentLikeCnt(Long commentId) {
+        return commentRepository.getLikeCnt(commentId);
+    }
+
 }

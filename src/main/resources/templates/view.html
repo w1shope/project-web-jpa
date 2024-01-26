@@ -39,7 +39,7 @@
     </div>
 
     <div class="mt-3">
-        <button onclick="clickLikeButton()" class="btn btn-outline-danger">
+        <button onclick="clickBoardLikeBtn()" class="btn btn-outline-danger">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                  class="bi bi-heart-fill"
                  viewBox="0 0 16 16">
@@ -65,18 +65,40 @@
         <button type="button" class="btn btn-secondary" onclick="writeComment()">댓글 작성</button>
     </div>
     <!-- 댓글 목록-->
-    <div th:each="comment, commentState: ${board.comments}" style="margin-top: 20px; margin-bottom: 20px;" th:if="${board.getComments()}">
+    <div th:each="comment, commentState: ${board.comments}" style="margin-top: 20px; margin-bottom: 20px;"
+         th:if="${board.getComments()}">
         <div class="border rounded" style="background-color: rgb(240, 240, 240); position:relative;">
             <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">
-                작성자:<span th:text="${comment.getWriter()}"></span>
+                작성자:<span th:text="${comment.getWriter()}" th:id="|commentWriter${commentState.index}|"></span>
             </div>
             <div class="text-black-50" style="margin-left: 10px;">
-                작성일자: <span th:text="${comment.getCreatedDate()}" th:id="|commentCreatedDate${commentState.index}|"></span>
+                작성일자: <span th:text="${comment.getCreatedDate()}"
+                            th:id="|commentCreatedDate${commentState.index}|"></span>
             </div>
-            <div th:if="${loginMember.getNickName().equals(comment.getWriter())}" class="sticky-top" style="position:absolute; margin-left: 650px; margin-top: 10px;">
-                <button th:id="|editRequestBtn${commentState.index}|" class="btn btn-primary" th:onclick="readOnlyAttrRemove([[${commentState.index}]])">수정</button>
-                <button th:id="|removeRequestBtn${commentState.index}|" class="btn btn-danger" th:onclick="deleteComment([[${commentState.index}]])">삭제</button>
-                <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none" th:onclick="editContent([[${commentState.index}]])">수정완료</button>
+            <div class="sticky-top"
+                 style="position:absolute; margin-left: 650px; margin-top: 10px;">
+                <button th:id="|commentLikeBtn${commentState.index}|"
+                        th:onclick="clickCommentLikeBtn([[${commentState.index}]])"
+                        class="btn btn-outline-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-heart-fill"
+                         viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"></path>
+                    </svg>
+                    <span th:text="${comment.getLikeCnt()}" th:id="|commentLikeCnt${commentState.index}|">좋아요 개수</span>
+                </button>
+                <button th:id="|editRequestBtn${commentState.index}|" class="btn btn-primary"
+                        th:onclick="readOnlyAttrRemove([[${commentState.index}]])"
+                        th:if="${loginMember.getNickName().equals(comment.getWriter())}">수정
+                </button>
+                <button th:id="|removeRequestBtn${commentState.index}|" class="btn btn-danger"
+                        th:onclick="deleteComment([[${commentState.index}]])"
+                        th:if="${loginMember.getNickName().equals(comment.getWriter())}">삭제
+                </button>
+                <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none"
+                        th:onclick="editContent([[${commentState.index}]])">수정완료
+                </button>
             </div>
             <hr style="width: 650px;">
             <div style="height: 100px">
@@ -88,7 +110,7 @@
     </div>
 </div>
 <script>
-    function clickLikeButton() {
+    function clickBoardLikeBtn() {
         let boardId = document.getElementById("boardId").value;
         $.ajax({
             type: "POST",
@@ -171,6 +193,7 @@
         document.getElementById("commentContent" + index).style.backgroundColor = "rgb(255, 255, 255)";
         document.getElementById("editRequestBtn" + index).style.display = "none";
         document.getElementById("removeRequestBtn" + index).style.display = "none";
+        document.getElementById("commentLikeBtn" + index).style.display = "none";
         document.getElementById("editSuccessBtn" + index).style.display = "block";
     }
 
@@ -183,14 +206,36 @@
             url: "/boards/comment",
             data: JSON.stringify({boardId: boardId, newContent: newContent, commentCreatedDate: createdDate}),
             contentType: "application/json",
-            success: function(res) {
-                if(res) {
+            success: function (res) {
+                if (res) {
                     alert("댓글이 정상적으로 수정되었습니다");
                     window.location.replace("/boards/" + boardId);
                 }
             },
-            error: function(err) {
+            error: function (err) {
 
+            }
+        })
+    }
+
+    function clickCommentLikeBtn(index) {
+        var commentWriter = document.getElementById("commentWriter" + index).innerHTML; // 작성자
+        var commentContent = document.getElementById("commentContent" + index).value; // 작성내용
+        var commentCreatedDate = document.getElementById("commentCreatedDate" + index).innerHTML; // 작성일자
+        $.ajax({
+            type: "POST",
+            url: "/boards/comment/likecnt",
+            data: JSON.stringify({
+                commentWriter: commentWriter, commentContent: commentContent,
+                commentCreatedDate: commentCreatedDate
+            }),
+            contentType: "application/json",
+            success: function (res) {
+                if (res) {
+                    document.getElementById("commentLikeCnt" + index).innerHTML = res.likeCnt;
+                }
+            },
+            error: function (err) {
             }
         })
     }

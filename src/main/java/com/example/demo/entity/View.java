@@ -8,11 +8,12 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "view_board")
 public class View {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "view_id")
+    @Column(name = "view_board_id")
     private Long id;
 
     @Column(columnDefinition = "TINYINT")
