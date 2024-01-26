@@ -15,5 +15,8 @@ public interface ViewCommentRepository extends JpaRepository<ViewComment, Long> 
             " join fetch vc.comment c" +
             " where m.loginId = :memberLoginId and c.id = :commentId")
     Optional<ViewComment> findViewCommentWithMemberAndComment(@Param(value = "memberLoginId") String loginId,
-                                                @Param(value = "commentId") Long commentId);
+                                                              @Param(value = "commentId") Long commentId);
+
+    @Query(value = "select vc from ViewComment vc join fetch vc.comment v where v.id = :commentId")
+    Optional<ViewComment> findByViewCommentWithCommentByCommentId(@Param(value = "commentId") Long commentId);
 }

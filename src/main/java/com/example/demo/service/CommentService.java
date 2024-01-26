@@ -4,8 +4,10 @@ import com.example.demo.entity.Board;
 import com.example.demo.entity.Comment;
 import com.example.demo.entity.Member;
 import com.example.demo.repository.CommentRepository;
+import com.example.demo.repository.ViewCommentRepository;
 import com.example.demo.vo.WriteCommentVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final ViewCommentRepository viewCommentRepository;
 
     @Transactional
     public Comment save(WriteCommentVO vo, Board board, Member member) {
@@ -36,6 +40,7 @@ public class CommentService {
         return commentRepository.findCommentWithMemberAndBoard();
     }
 
+    @Transactional
     public void deleteComment(Comment comment) {
         commentRepository.deleteComment(comment.getId());
     }

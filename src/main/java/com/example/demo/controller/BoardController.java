@@ -270,6 +270,12 @@ public class BoardController {
                 .filter(c -> c.getMember().getLoginId().equals(loginId))
                 .findFirst()
                 .orElse(null);
+        // 해당 comment_id를 가지는 viewcomment가 있으면 먼저 제거후 comment 제거
+        ViewComment viewComment = viewCommentRepository.findByViewCommentWithCommentByCommentId(comment.getId())
+                .orElse(null);
+        if (viewComment != null) {
+            viewCommentRepository.deleteById(viewComment.getId());
+        }
         commentService.deleteComment(comment);
         return "ok";
     }
