@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,8 +30,10 @@ public class Board {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "board")
-    private List<View> views;
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "board",
+    cascade = CascadeType.PERSIST)
+    private List<View> views = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
@@ -38,5 +41,10 @@ public class Board {
 
     public void changeFile(File file) {
         this.file = file;
+    }
+
+    public void relationToMember(Member member){
+        this.member = member;
+        member.getBoards().add(this);
     }
 }

@@ -29,10 +29,13 @@ public class Member {
     private LocalDateTime createdDate;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Board> boards = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<View> views = new ArrayList<>();
 }
 

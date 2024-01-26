@@ -25,4 +25,14 @@ public class View {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void relationToBoard(Board board) {
+        this.board = board;
+        board.getViews().add(this);
+    }
+
+    public void relationToMember(Member member) {
+        this.member = member;
+        member.getViews().add(this);
+    }
 }
