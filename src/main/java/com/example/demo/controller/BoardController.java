@@ -201,8 +201,6 @@ public class BoardController {
     public ResponseEntity<Resource> downloadFile(@PathVariable("boardId") Long boardId) throws MalformedURLException {
         Board board = boardService.findBoard(boardId);
         String storedFilePath = board.getFile().getStoredFilePath();
-        System.out.println("storedFilePath = " + storedFilePath);
-
         UrlResource resource = new UrlResource("file:" + storedFilePath);
         String encodeUploadFilename = UriUtils.encode(board.getFile().getUploadFilename(), StandardCharsets.UTF_8);
         String contentDisposition = "attachment; filename=\"" + encodeUploadFilename + "\"";
