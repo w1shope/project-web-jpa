@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -80,12 +81,7 @@ public class HomeController {
                         board.getFile()
                 )).collect(Collectors.toList());
         model.addAttribute("boards", result);
-        int boardTotalCount = boardService.findBoardWithFile().size();
-        List<Integer> pageList = new ArrayList<>();
-        for (int i = 0; i <= boardTotalCount / (pageable.getPageSize() + 1); i++) {
-            pageList.add(i);
-        }
-        model.addAttribute("pages", pageList);
+        model.addAttribute("pages", IntStream.rangeClosed(0, boardService.findBoardWithFile().size() / (pageable.getPageSize() + 1)).boxed().collect(Collectors.toList()));
         return "/home";
     }
 }

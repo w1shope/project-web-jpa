@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -104,11 +105,7 @@ public class BoardController {
                         post.getLikeCnt()))
                 .collect(Collectors.toList());
         model.addAttribute("boards", result);
-        List<Integer> pageList = new ArrayList<>();
-        for(int i = 0; i <= boardService.findAll().size() / (pageable.getPageSize() + 1); i++) {
-            pageList.add(i);
-        }
-        model.addAttribute("pages", pageList);
+        model.addAttribute("pages", IntStream.rangeClosed(0, boardService.findAll().size() / (pageable.getPageNumber() + 1)).boxed().collect(Collectors.toList()));
         return "/boardList";
     }
 
