@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ import org.springframework.web.util.UriUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -94,13 +97,18 @@ public class BoardController {
      * 전체 게시물 조회
      */
     @GetMapping("/boards")
-    public String getAllBoards(Model model) {
-        List<ResponseBoardListDto> result = boardService.findAll().stream()
+    public String getAllBoards(Model model, @PageableDefault(size = 10) Pageable pageable) {
+        List<ResponseBoardListDto> result = boardService.findAll(pageable).stream()
                 .map(post -> new ResponseBoardListDto(post.getId(), post.getTitle(), post.getContent()
                         , post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(),
                         post.getLikeCnt()))
                 .collect(Collectors.toList());
         model.addAttribute("boards", result);
+        List<Integer> pageList = new ArrayList<>();
+        for(int i = 0; i <= boardService.findAll().size() / (pageable.getPageSize() + 1); i++) {
+            pageList.add(i);
+        }
+        model.addAttribute("pages", pageList);
         return "/boardList";
     }
 

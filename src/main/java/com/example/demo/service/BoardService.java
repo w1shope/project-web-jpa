@@ -96,6 +96,10 @@ public class BoardService {
         return boardRepository.findBoardAll();
     }
 
+    public List<Board> findAll(Pageable pageable) {
+        return boardRepository.findBoardAll(pageable);
+    }
+
     public List<Board> getPostsBySearch(SearchBoardConditionVO vo) {
         return boardRepository.getPostsBySearch(vo.getCondition());
     }

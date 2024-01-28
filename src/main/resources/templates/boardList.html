@@ -57,6 +57,15 @@
         </tbody>
     </table>
 </div>
+<div class="fixed-bottom d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item" th:each="pageNum: ${pages}"><a class="page-link" th:href="|@{/boards?page={num}&size=10(num=${pageNum})}|" th:text="${pageNum + 1}">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+</div>
 <script>
     function searchBoardList() {
         let searchTitle = $("#searchText").val();
