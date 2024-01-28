@@ -52,6 +52,7 @@ public class HomeController {
                         board.getFile()
                 )).collect(Collectors.toList());
         model.addAttribute("boards", result);
+        log.info("result={}", result.size());
         return "/home";
     }
 }

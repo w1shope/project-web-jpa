@@ -86,14 +86,15 @@
 
     <div class="row row-cols-1 row-cols-md-3 g-4 center-row">
         <div th:each="board : ${boards}" class="col">
-            <div class="card">
+            <div class="card" style="margin-bottom: 20px">
                 <div class="card">
-                    <svg th:unless="${board.getFile()}" class="bd-placeholder-img card-img-top" width="100%" height="140"
+                    <svg th:unless="${board.getFile()}" class="bd-placeholder-img card-img-top" width="100%" height="200px"
                          xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap"
                          preserveAspectRatio="xMidYMid slice" focusable="false">
                         <rect width="100%" height="100%"></rect>
                     </svg>
-                    <img th:src="|@{/images/{storedFileName}(storedFileName=${board.getFile().getStoredFileName()})}|" alt="dynamic image">
+                    <img th:if="${board.getFile()}" th:src="|@{/images/{storedFileName}(storedFileName=${board.getFile().getStoredFileName()})}|" alt="dynamic image"
+                        width="100%" height="200px">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${board.getTitle()}">게시물 제목</h5>
                         <p class="card-text" th:text="${board.getContent()}">게시물 내용</p>
