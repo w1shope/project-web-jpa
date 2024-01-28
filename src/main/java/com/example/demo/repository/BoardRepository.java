@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Board;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -51,4 +52,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query(value = "select b from Board b left join fetch b.file")
     List<Board> findBoardWithFile();
+
+    @Query(value = "select b from Board b left join fetch b.file")
+    List<Board> findBoardWithFile(Pageable pageable);
 }

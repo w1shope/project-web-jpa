@@ -13,6 +13,7 @@ import com.example.demo.repository.BoardRepository;
 import com.example.demo.vo.SearchBoardConditionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -158,5 +159,9 @@ public class BoardService {
 
     public List<Board> findBoardWithFile() {
         return boardRepository.findBoardWithFile();
+    }
+
+    public List<Board> findBoardWithFile(Pageable pageable) {
+        return boardRepository.findBoardWithFile(pageable);
     }
 }
