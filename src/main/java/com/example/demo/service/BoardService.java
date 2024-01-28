@@ -49,7 +49,8 @@ public class BoardService {
             if (uploadedFile != null) {
                 File file = File.builder()
                         .uploadFilename(uploadedFile.getUploadFilename())
-                        .storedFilePath(uploadedFile.getStoredFilePath())
+                        .storedFileName(uploadedFile.getStoredFileName())
+                        .storedFilePath(fileStore.getStoredFullPath(uploadedFile.getStoredFileName()))
                         .build();
                 fileService.save(file);
 
@@ -125,7 +126,8 @@ public class BoardService {
         if (uploadedFile != null) {
             File file = File.builder()
                     .uploadFilename(uploadedFile.getUploadFilename())
-                    .storedFilePath(uploadedFile.getStoredFilePath())
+                    .storedFileName(uploadedFile.getStoredFileName())
+                    .storedFilePath(fileStore.getStoredFullPath(uploadedFile.getStoredFileName()))
                     .build();
             Board findBoard = boardRepository.findBoardWithFileByBoardId(request.getBoardId()).orElse(null);
             if (findBoard != null) {
@@ -152,5 +154,9 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long id) {
         boardRepository.deleteBoardByBoardId(id);
+    }
+
+    public List<Board> findBoardWithFile() {
+        return boardRepository.findBoardWithFile();
     }
 }
