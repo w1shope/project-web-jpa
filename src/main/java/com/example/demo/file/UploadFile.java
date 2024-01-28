@@ -8,5 +8,5 @@ import lombok.Getter;
 public class UploadFile {
 
     private String uploadFilename;
-    private String storedFilePath;
+    private String storedFileName;
 }
