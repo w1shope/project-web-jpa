@@ -30,15 +30,15 @@ public class FileStore {
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
-        String storedFilePath = getStoredFilePath(originalFilename);
-        multipartFile.transferTo(new File(getStoredFullPath(storedFilePath)));
-        return new UploadFile(originalFilename, storedFilePath);
+        String storedFileName = getStoredFileName(originalFilename);
+        multipartFile.transferTo(new File(getStoredFullPath(storedFileName)));
+        return new UploadFile(originalFilename, storedFileName);
     }
 
     /**
-     * 파일이 저장되는 서버 경로 반환
+     * 서버에 저장할 중복되지 않는 파일명 생성
      */
-    private String getStoredFilePath(String originalFilename) {
+    private String getStoredFileName(String originalFilename) {
         return UUID.randomUUID().toString() + "."
                 + getExtend(originalFilename);
     }
