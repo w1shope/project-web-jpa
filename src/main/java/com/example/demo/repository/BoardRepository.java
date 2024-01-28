@@ -49,6 +49,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query(value = "delete from Board b where b.id = :boardId")
     void deleteBoardByBoardId(@Param(value = "boardId") Long id);
 
-    @Query(value = "select b from Board b join fetch b.file")
+    @Query(value = "select b from Board b left join fetch b.file")
     List<Board> findBoardWithFile();
 }
