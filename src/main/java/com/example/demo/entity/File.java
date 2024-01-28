@@ -16,5 +16,6 @@ public class File {
     private Long id;
 
     private String uploadFilename; // 실제 파일명
+    private String storedFileName; // 서버에 저장된 파일명
     private String storedFilePath; // 파일이 저장된 서버 경로
 }
