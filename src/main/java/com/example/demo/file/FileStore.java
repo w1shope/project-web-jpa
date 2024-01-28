@@ -30,9 +30,8 @@ public class FileStore {
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
-        String storedFilePath = getStoredFullPath(getStoredFilePath(originalFilename));
-        multipartFile.transferTo(new File(storedFilePath));
-        log.info("storedFileName={}", storedFilePath);
+        String storedFilePath = getStoredFilePath(originalFilename);
+        multipartFile.transferTo(new File(getStoredFullPath(storedFilePath)));
         return new UploadFile(originalFilename, storedFilePath);
     }
 
