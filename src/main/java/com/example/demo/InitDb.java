@@ -1,9 +1,11 @@
 package com.example.demo;
 
 import com.example.demo.entity.Board;
+import com.example.demo.entity.File;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.View;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.FileRepository;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.ViewRepository;
 import jakarta.annotation.PostConstruct;
@@ -34,6 +36,7 @@ public class InitDb {
         private final MemberRepository memberRepository;
         private final ViewRepository viewRepository;
         private final BoardRepository boardRepository;
+        private final FileRepository fileRepository;
 
         public void initService() {
             Member member = Member.builder()
@@ -47,6 +50,13 @@ public class InitDb {
                     .build();
             memberRepository.save(member);
 
+            File file = File.builder()
+                    .uploadFilename("capture.png")
+                    .storedFileName("8fbeff27-c719-403e-a485-cfa6bff1cf8f.png")
+                    .storedFilePath("/Users/hope/Desktop/Desktop/upload-file/8fbeff27-c719-403e-a485-cfa6bff1cf8f.png")
+                    .build();
+            fileRepository.save(file);
+
             Board board = Board.builder()
                     .title("titleA")
                     .content("contentA")
@@ -55,6 +65,7 @@ public class InitDb {
                     .viewCnt(0)
                     .likeCnt(0)
                     .member(member)
+                    .file(file)
                     .build();
             boardRepository.save(board);
 
