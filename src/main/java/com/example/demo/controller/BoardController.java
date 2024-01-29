@@ -105,7 +105,7 @@ public class BoardController {
                         post.getLikeCnt()))
                 .collect(Collectors.toList());
         model.addAttribute("boards", result);
-        model.addAttribute("pages", IntStream.rangeClosed(0, boardService.findAll().size() / (pageable.getPageNumber() + 1)).boxed().collect(Collectors.toList()));
+        model.addAttribute("pages", IntStream.rangeClosed(0, boardService.findAll().size() / (pageable.getPageSize() + 1)).boxed().collect(Collectors.toList()));
         return "/boardList";
     }
 
