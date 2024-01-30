@@ -10,6 +10,13 @@
         body {
             padding-top: 60px; /* 네비게이션 바 때문에 페이지 상단에 간격 추가 */
         }
+
+        .enroll-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body>
@@ -74,17 +81,18 @@
     </table>
 </div>
 
-<div>
+<div class="enroll-button">
     <a th:href="@{/questions/enrol}">
-        <button type="button" class="btn btn-primary fixed-bottom" style="margin-bottom: 100px; width: 500px;">게시물 등록</button>
+        <button type="button" class="btn btn-primary" style="width: 200px; margin-bottom: 50px;">질문 등록</button>
     </a>
 </div>
 
-<div class="fixed-bottom d-flex justify-content-center">
+<div class="fixed-bottom d-flex justify-content-center" style="z-index: 1;">
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item" th:each="pageNum: ${pages}"><a class="page-link" th:href="|@{/boards?page={num}&size=10(num=${pageNum})}|" th:text="${pageNum + 1}">1</a></li>
+            <li th:each="pageNum: ${pages}" class="page-item"><a class="page-link"
+                                                                 th:href="|@{/questions?page={num}&size=10(num=${pageNum})}|" th:text="${pageNum + 1}">1</a></li>
             <li class="page-item"><a class="page-link" href="#">Next</a></li>
         </ul>
     </nav>

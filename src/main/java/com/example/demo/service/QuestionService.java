@@ -8,6 +8,7 @@ import com.example.demo.entity.Question;
 import com.example.demo.entity.QuestionState;
 import com.example.demo.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,15 @@ public class QuestionService {
     public List<Question> getAllWithMember() {
         return questionRepository.findQuestionAllWithMember();
     }
+
+    /**
+     * 전체 게시물 가져오기
+     * question - member 페치 조인
+     */
+    public List<Question> getAllWithMember(Pageable pageable) {
+        return questionRepository.findQuestionAllWithMember(pageable);
+    }
+
 
     /**
      * 특정 게시물 가져오기

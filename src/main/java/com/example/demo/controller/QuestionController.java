@@ -6,6 +6,7 @@ import com.example.demo.dto.RequestUpdateQuestionStateDto;
 import com.example.demo.dto.ResponseQuestionDto;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.Question;
+import com.example.demo.repository.QuestionRepository;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.QuestionService;
 import com.example.demo.vo.DeleteQuestionVO;
@@ -13,6 +14,8 @@ import com.example.demo.vo.UpdateQuestionStateVO;
 import com.example.demo.vo.UpdateQuestionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @Slf4j
@@ -27,14 +32,16 @@ import java.util.NoSuchElementException;
 public class QuestionController {
 
     private final QuestionService questionService;
+    private final QuestionRepository questionRepository;
     private final MemberService memberService;
 
     /**
      * 전체 게시물 가져오기
      */
     @GetMapping("/questions")
-    public String getAllQuestion(Model model) {
-        model.addAttribute("questions", questionService.getAllWithMember());
+    public String getAllQuestion(Model model, @PageableDefault(size = 10) Pageable pageable) {
+        model.addAttribute("questions", questionService.getAllWithMember(pageable));
+        model.addAttribute("pages", IntStream.rangeClosed(0, questionRepository.findAll().size() / (pageable.getPageSize() + 1)).boxed().collect(Collectors.toList()));
         return "/questionList";
     }
 
