@@ -10,6 +10,13 @@
         body {
             padding-top: 60px; /* 네비게이션 바 때문에 페이지 상단에 간격 추가 */
         }
+
+        .enroll-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body>
@@ -56,6 +63,11 @@
         </tr>
         </tbody>
     </table>
+</div>
+<div class="enroll-button">
+    <a th:href="@{/board}">
+        <button type="button" class="btn btn-primary" style="width: 200px; margin-bottom: 50px;">게시물 등록</button>
+    </a>
 </div>
 <div class="fixed-bottom d-flex justify-content-center">
     <nav aria-label="Page navigation example">
