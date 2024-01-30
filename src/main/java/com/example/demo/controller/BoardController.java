@@ -48,12 +48,12 @@ public class BoardController {
     private final ViewCommentService viewCommentService;
     private final ViewCommentRepository viewCommentRepository;
 
-    @GetMapping("/board")
+    @GetMapping("/boards/enroll")
     public String writePage(@ModelAttribute("board") RequestEnrolBoardDto request,
                             Model model, @SessionAttribute(name = "loginId", required = false) String loginId
             , RedirectAttributes redirectAttributes) {
         if (loginId == null) {
-            redirectAttributes.addAttribute("writeFailed", "잘못된 요청입니다");
+            redirectAttributes.addAttribute("requireLogin", "로그인 후 이용 가능합니다");
             return "redirect:/home";
         }
         model.addAttribute("loginId", loginId);
@@ -112,7 +112,7 @@ public class BoardController {
     /**
      * 게시물 등록
      */
-    @PostMapping("/board")
+    @PostMapping("/boards/enroll")
     public String enrolBoard(@Valid @ModelAttribute("board") RequestEnrolBoardDto request, BindingResult bindingResult
             , Model model, @RequestParam("file") MultipartFile multipartFile) throws IOException {
         if (bindingResult.hasErrors()) {

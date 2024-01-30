@@ -87,8 +87,18 @@ public class QuestionController {
      * 게시물 등록
      */
     @GetMapping("/questions/enrol")
-    public String enrolQuestionPage(@ModelAttribute("question")RequestQuestionEnrolDto request) {
-        return "/question";
+    public String enrolQuestionPage(@ModelAttribute("question")RequestQuestionEnrolDto request,
+                                    @SessionAttribute(value = "loginId", required = false) String loginId,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            if(loginId == null) {
+                redirectAttributes.addAttribute("requireLogin", "로그인 후 이용 가능합니다");
+                return "redirect:/home";
+            }
+            return "/question";
+        } catch (NoSuchElementException ex) {
+            return "redirect:/home";
+        }
     }
 
     @PostMapping("/questions/enrol")

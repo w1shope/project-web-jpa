@@ -20,7 +20,7 @@
 </nav>
 
 <div class="container mt-5">
-    <form method="post" th:action="@{/board}" th:object="${board}" enctype="multipart/form-data">
+    <form method="post" th:action="@{/boards/enroll}" th:object="${board}" enctype="multipart/form-data">
         <input type="hidden" id="loginId" name="loginId" th:value="${loginId}"/>
         <div class="form-group">
             <label for="title">제목:</label>
