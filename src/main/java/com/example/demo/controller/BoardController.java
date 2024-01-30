@@ -65,32 +65,25 @@ public class BoardController {
      */
     @GetMapping("/boards/{id}")
     public String viewBoard(@PathVariable("id") Long boardId, Model model,
-                            @SessionAttribute("loginId") String loginId) {
+                            @SessionAttribute(value = "loginId", required = false) String loginId) {
         try {
             Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
-            Member loginMember = memberService.getLoginMember(loginId);
-            boardService.increaseViewCnt(findBoard); // 조회수 증가
-            List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
-                    .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
-                            c.getContent(), c.getCreatedDate(), c.getEditDate(), c.getLikeCnt()))
+            model.addAttribute("board", new ResponseFindBoardDto(findBoard.getId(),
+                    findBoard.getTitle(), findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename(),
+                    findBoard.getMember()));
+            // 댓글 찾기
+            List<ResponseCommentDto> findComments = commentService.findCommentWithMemberAndBoard().stream()
+                    .map(comment -> new ResponseCommentDto(comment.getMember().getNickName(),
+                            comment.getBoard().getContent(), comment.getCreatedDate(),
+                            comment.getEditDate(), comment.getLikeCnt()))
                     .collect(Collectors.toList());
-            ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
-                    , findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename(), comments);
-            model.addAttribute("board", response);
-            model.addAttribute("loginMember", loginMember);
-        } catch (NoSuchElementException ex) {
-            Board findBoard = boardRepository.findById(boardId).get(); // 게시물 찾기
-            boardService.increaseViewCnt(findBoard); // 조회수 증가
-            List<ResponseCommentDto> comments = commentService.findCommentWithMemberAndBoard().stream()
-                    .map(c -> new ResponseCommentDto(c.getMember().getNickName(),
-                            c.getContent(), c.getCreatedDate(), c.getEditDate(), c.getLikeCnt()))
-                    .collect(Collectors.toList());
-            ResponseViewBoardDto response = new ResponseViewBoardDto(findBoard.getId(), findBoard.getTitle()
-                    , findBoard.getContent(), findBoard.getLikeCnt(), null, comments);
-            model.addAttribute("board", response);
-            model.addAttribute("loginMember", memberService.getLoginMember(loginId));
-        } finally {
+            model.addAttribute("comments", findComments);
+            model.addAttribute("loginMember", loginId == null ? null : memberService.getLoginMember(loginId));
+            // 조회수 증가
+            boardService.increaseViewCnt(findBoard);
             return "/view";
+        } catch(NoSuchElementException ex) {
+            throw ex;
         }
     }
 
@@ -156,6 +149,9 @@ public class BoardController {
                                                 @SessionAttribute("loginId") String loginId) {
         try {
             Board board = boardRepository.findById(vo.getBoardId()).orElse(null);
+            if(loginId == null) {
+                throw new NoSuchElementException("로그인한 사용자만 좋아요를 누를 수 있습니다");
+            }
             Member loginMember = memberService.getLoginMember(loginId);
             View findView = viewService.getAll().stream()
                     .filter(view -> view.getBoard().getId().equals(board.getId()))

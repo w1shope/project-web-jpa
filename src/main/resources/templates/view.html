@@ -48,10 +48,10 @@
             </svg>
             <span th:text="${board.getLikeCnt()}" id="likeCnt" name="likeCnt">좋아요 개수</span>
         </button>
-        <a th:href="@{/boards/{boardId}/update(boardId=${board.getBoardId()})}">
+        <a th:href="@{/boards/{boardId}/update(boardId=${board.getBoardId()})}" th:if="${loginMember != null && loginMember.getId() == board.getMember().getId()}">
             <button class="btn btn-primary">게시물 수정</button>
         </a>
-        <button class="btn btn-danger" onclick="deleteBoardBtn()">게시물 삭제</button>
+        <button class="btn btn-danger" onclick="deleteBoardBtn()" th:if="${loginMember != null && loginMember.getId() == board.getMember().getId()}">게시물 삭제</button>
         <a th:href="@{/boards}">
             <button class="btn btn-secondary">게시물 목록</button>
         </a>
@@ -65,8 +65,8 @@
         <button type="button" class="btn btn-secondary" onclick="writeComment()">댓글 작성</button>
     </div>
     <!-- 댓글 목록-->
-    <div th:each="comment, commentState: ${board.comments}" style="margin-top: 20px; margin-bottom: 20px;"
-         th:if="${board.getComments()}">
+    <div th:each="comment, commentState: ${comments}" style="margin-top: 20px; margin-bottom: 20px;"
+         th:if="${comments}">
         <div class="border rounded" style="background-color: rgb(240, 240, 240); position:relative;">
             <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">
                 작성자:<span th:text="${comment.getWriter()}" th:id="|commentWriter${commentState.index}|"></span>
@@ -90,13 +90,13 @@
                 </button>
                 <button th:id="|editRequestBtn${commentState.index}|" class="btn btn-primary"
                         th:onclick="readOnlyAttrRemove([[${commentState.index}]])"
-                        th:if="${loginMember.getNickName().equals(comment.getWriter())}">수정
+                        th:if="${loginMember != null && loginMember.getNickName().equals(comment.getWriter())}">수정
                 </button>
                 <button th:id="|removeRequestBtn${commentState.index}|" class="btn btn-danger"
                         th:onclick="deleteComment([[${commentState.index}]])"
-                        th:if="${loginMember.getNickName().equals(comment.getWriter())}">삭제
+                        th:if="${loginMember != null && loginMember.getNickName().equals(comment.getWriter())}">삭제
                 </button>
-                <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none"
+                <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none;"
                         th:onclick="editContent([[${commentState.index}]])">수정완료
                 </button>
             </div>
@@ -121,6 +121,7 @@
                 document.getElementById("likeCnt").innerHTML = response.likeCnt;
             },
             error: function (error) {
+                alert("로그인 후 좋아요를 누를 수 있습니다");
             }
         })
     }
