@@ -47,14 +47,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a th:if="${loginMember}" class="nav-link" th:href="@{/board}">게시물 작성 <span class="sr-only">(current)</span></a>
-                    <a th:unless="${loginMember}" class="nav-link text-muted disabled" th:href="@{/board}">게시물 작성 <span
-                            class="sr-only">(current)</span></a>
+                    <a class="nav-link" th:href="@{/boards}">전체 게시물<span class="sr-only">(current)</span></a>
                 </li>
 
                 <li class="nav-item active">
-                    <a th:if="${loginMember}" class="nav-link" th:href="@{/boards}">게시물 목록 <span class="sr-only">(current)</span></a>
-                    <a th:unless="${loginMember}" class="nav-link text-muted disabled">게시물 작성 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" th:href="@{/questions}">질문 게시판</a>
                 </li>
 
                 <div th:if="${loginMember}" class="dropdown">
