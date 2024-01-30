@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>질문 목록</title>
+    <!-- 부트스트랩 CDN 추가 -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 60px; /* 네비게이션 바 때문에 페이지 상단에 간격 추가 */
+        }
+    </style>
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" th:href="@{/home}">Home</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        </div>
+    </nav>
+</div>
+<div class="container mt-5">
+    <h2>질문 목록</h2>
+    <div class="float-right">
+        <div class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="검색" id="searchText" name="searchText"
+                   aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchBoardList()">검색</button>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">내용</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+            <th scope="col">상태</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 각 행에 해당하는 데이터를 반복적으로 표시 -->
+        <tr th:each="question : ${questions}">
+            <th scope="row" th:text="${question.getId()}">번호</th>
+            <td th:text="${question.getTitle()}">게시물 제목</td>
+            <td th:text="${question.content}">게시물 내용</td>
+            <td th:text="${question.getMember().username}">작성자</td>
+            <td th:text="${question.getCreatedDate()}">작성일</td>
+            <td>
+                <button th:if="${question.getQuestionState() == T(com.example.demo.entity.QuestionState).UNRESOLVED}" class="btn btn-danger">답변 예정</button>
+                <button th:if="${question.getQuestionState() == T(com.example.demo.entity.QuestionState).SOLVED}" class="btn btn-success">답변 완료</button>
+            </td>
+            <td>
+                <a th:href="@{/questions/{id}(id=${question.getId()})}"  class="btn btn-primary">자세히 보기</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <a th:href="@{/questions/enrol}">
+        <button type="button" class="btn btn-primary fixed-bottom" style="margin-bottom: 100px; width: 500px;">게시물 등록</button>
+    </a>
+</div>
+
+<div class="fixed-bottom d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item" th:each="pageNum: ${pages}"><a class="page-link" th:href="|@{/boards?page={num}&size=10(num=${pageNum})}|" th:text="${pageNum + 1}">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
