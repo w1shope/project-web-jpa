@@ -1,13 +1,7 @@
 package com.example.demo;
 
-import com.example.demo.entity.Board;
-import com.example.demo.entity.File;
-import com.example.demo.entity.Member;
-import com.example.demo.entity.View;
-import com.example.demo.repository.BoardRepository;
-import com.example.demo.repository.FileRepository;
-import com.example.demo.repository.MemberRepository;
-import com.example.demo.repository.ViewRepository;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +31,7 @@ public class InitDb {
         private final ViewRepository viewRepository;
         private final BoardRepository boardRepository;
         private final FileRepository fileRepository;
+        private final QuestionRepository questionRepository;
 
         public void initService() {
             Member member = Member.builder()
@@ -80,6 +75,17 @@ public class InitDb {
                     .createdDate(LocalDateTime.now())
                     .build();
             memberRepository.save(member2);
+
+            Question question = Question.builder()
+                    .title("질문 제목A")
+                    .content("질문 내용A")
+                    .createdDate(LocalDateTime.now())
+                    .editDate(null)
+                    .member(member2)
+                    .questionState(QuestionState.UNRESOLVED)
+                    .build();
+            questionRepository.save(question);
+
         }
     }
 }
