@@ -2,12 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.RequestQuestionEnrolDto;
 import com.example.demo.dto.RequestUpdateQuestionDto;
+import com.example.demo.dto.RequestUpdateQuestionStateDto;
 import com.example.demo.dto.ResponseQuestionDto;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.Question;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.QuestionService;
 import com.example.demo.vo.DeleteQuestionVO;
+import com.example.demo.vo.UpdateQuestionStateVO;
 import com.example.demo.vo.UpdateQuestionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,6 +106,18 @@ public class QuestionController {
     public String updateQuestion(@RequestBody UpdateQuestionVO vo) {
         RequestUpdateQuestionDto request = new RequestUpdateQuestionDto(vo.getQuestionId(), vo.getTitle(), vo.getContent());
         questionService.update(request);
+        return "ok";
+    }
+
+    /**
+     * 질문 답변 상태 변경
+     */
+    @ResponseBody
+    @PatchMapping("/questions/state")
+    public String changeState(@RequestBody UpdateQuestionStateVO vo) {
+        log.info("vo={},{}", vo.getQuestionId(), vo.getState());
+        RequestUpdateQuestionStateDto request = new RequestUpdateQuestionStateDto(vo.getQuestionId(), vo.getState());
+        questionService.updateState(request);
         return "ok";
     }
 }

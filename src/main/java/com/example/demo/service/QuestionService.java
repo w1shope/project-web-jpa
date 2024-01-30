@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.RequestQuestionEnrolDto;
 import com.example.demo.dto.RequestUpdateQuestionDto;
+import com.example.demo.dto.RequestUpdateQuestionStateDto;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.Question;
 import com.example.demo.entity.QuestionState;
@@ -64,5 +65,10 @@ public class QuestionService {
     @Transactional
     public void update(RequestUpdateQuestionDto request) {
         questionRepository.update(request.getTitle(), request.getContent(), request.getId());
+    }
+
+    @Transactional
+    public void updateState(RequestUpdateQuestionStateDto request) {
+        questionRepository.updateState(request.getState(), request.getId());
     }
 }
