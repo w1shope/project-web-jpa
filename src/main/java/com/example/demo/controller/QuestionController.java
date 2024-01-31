@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.RequestQuestionEnrolDto;
-import com.example.demo.dto.RequestUpdateQuestionDto;
-import com.example.demo.dto.RequestUpdateQuestionStateDto;
-import com.example.demo.dto.ResponseQuestionDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.Question;
 import com.example.demo.repository.QuestionRepository;
+import com.example.demo.service.AnswerService;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.QuestionService;
 import com.example.demo.vo.DeleteQuestionVO;
+import com.example.demo.vo.EnrollAnswerVO;
 import com.example.demo.vo.UpdateQuestionStateVO;
 import com.example.demo.vo.UpdateQuestionVO;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -34,6 +34,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final QuestionRepository questionRepository;
     private final MemberService memberService;
+    private final AnswerService answerService;
 
     /**
      * 전체 게시물 가져오기
@@ -49,7 +50,8 @@ public class QuestionController {
      * 특정 게시물 가져오기
      */
     @GetMapping("/questions/{id}")
-    private String getQuestion(@PathVariable("id") Long questionId, Model model) {
+    private String getQuestion(@PathVariable("id") Long questionId, Model model,
+                               @SessionAttribute(value = "loginId", required = false) String loginId) {
         try {
             Question findQuestion = questionService.findQuestionWithMemberById(questionId)
                     .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 잆습니다."));
@@ -57,6 +59,13 @@ public class QuestionController {
                     findQuestion.getId(), findQuestion.getTitle(), findQuestion.getContent(), findQuestion.getMember().getUsername(),
                     findQuestion.getCreatedDate(), findQuestion.getQuestionState()
             ));
+            List<ResponseAnswerDto> answers = answerService.findAnswerWithQuestionAll(questionId)
+                    .orElse(null).stream()
+                    .map(answer -> new ResponseAnswerDto(answer.getMember().getNickName(),
+                            answer.getContent(), answer.getCreatedDate()))
+                    .collect(Collectors.toList());
+            model.addAttribute("answers", answers == null ? null : answers);
+            model.addAttribute("loginMember", memberService.getLoginMember(loginId));
             return "/questionView";
         } catch (NoSuchElementException ex) {
             // 게시물을 읽어올 수 없으면 전체 게시물로 이동
@@ -135,6 +144,16 @@ public class QuestionController {
         log.info("vo={},{}", vo.getQuestionId(), vo.getState());
         RequestUpdateQuestionStateDto request = new RequestUpdateQuestionStateDto(vo.getQuestionId(), vo.getState());
         questionService.updateState(request);
+        return "ok";
+    }
+
+    @ResponseBody
+    @PostMapping("/answers/enroll")
+    public String enrollAnswer(@RequestBody EnrollAnswerVO vo,
+                               @SessionAttribute(value = "loginId", required = false) String loginId) {
+        Member loginMember = memberService.getLoginMember(loginId);
+        Question findQuestion = questionRepository.findById(vo.getQuestionId()).orElse(null);
+        answerService.enroll(loginMember, findQuestion, vo.getAnswerContent());
         return "ok";
     }
 }
