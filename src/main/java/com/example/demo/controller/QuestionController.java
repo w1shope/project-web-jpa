@@ -167,4 +167,17 @@ public class QuestionController {
             throw ex;
         }
     }
+
+    @ResponseBody
+    @DeleteMapping("/answers")
+    public String deleteAnswer(@RequestBody DeleteAnswerVO vo) {
+        try {
+            Answer findAnswer = answerService.findAnswer(vo.getQuestionId(), vo.getAnswerWriter(), vo.getAnswerCreatedDate())
+                    .orElseThrow(() -> new NoSuchElementException("질문에 대한 답변을 찾을 수 없습니다."));
+            answerService.deleteAnswer(findAnswer);
+            return "ok";
+        } catch(NoSuchElementException ex) {
+            throw ex;
+        }
+    }
 }

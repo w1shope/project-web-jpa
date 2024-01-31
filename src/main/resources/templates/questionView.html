@@ -128,8 +128,29 @@
                 window.location.href = "/questions/" + questionId;
             }
         })
+    }
 
-
+    function deleteComment(index) {
+        var checkDelete = confirm("댓글을 삭제하시겠습니까?");
+        if(checkDelete) {
+            var questionId = document.getElementById("questionId").value; // 질문 번호
+            var answerWriter = document.getElementById("answerWriter" + index).innerHTML; // 작성자
+            var answerCreatedDate = document.getElementById("answerCreatedDate" + index).innerHTML; // 작성일자
+            $.ajax({
+                type: "DELETE",
+                url: "/answers",
+                data: JSON.stringify({questionId: questionId, answerWriter: answerWriter, answerCreatedDate: answerCreatedDate}),
+                contentType: "application/json",
+                success: function(res){
+                    alert("질문에 대한 댓글이 정상적으로 삭제되었습니다");
+                    window.location.href = "/questions/" + questionId;
+                },
+                error: function(err){
+                    alert("질문에 대한 댓글 삭제에 실패하였습니다");
+                    window.location.href = "/questions/" + questionId;
+                }
+            })
+        }
     }
 </script>
 <!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->

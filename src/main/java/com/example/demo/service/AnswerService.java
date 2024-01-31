@@ -45,4 +45,9 @@ public class AnswerService {
     public void updateContent(Answer answer, String updateContent) {
         answerRepository.updateContent(updateContent, answer.getId());
     }
+
+    @Transactional
+    public void deleteAnswer(Answer answer) {
+        answerRepository.delete(answer);
+    }
 }
