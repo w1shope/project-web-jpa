@@ -74,7 +74,7 @@ public class BoardController {
             // 댓글 찾기
             List<ResponseCommentDto> findComments = commentService.findCommentWithMemberAndBoard().stream()
                     .map(comment -> new ResponseCommentDto(comment.getMember().getNickName(),
-                            comment.getBoard().getContent(), comment.getCreatedDate(),
+                            comment.getContent(), comment.getCreatedDate(),
                             comment.getEditDate(), comment.getLikeCnt()))
                     .collect(Collectors.toList());
             model.addAttribute("comments", findComments);
