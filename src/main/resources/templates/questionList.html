@@ -19,6 +19,9 @@
         }
     </style>
 </head>
+<script th:if="${param.deniedAccess}">
+    alert('[[${param.deniedAccess}]]');
+</script>
 <body>
 <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -57,7 +60,7 @@
             <td th:text="${question.getMember().username}" th:id="|questionWriter${questionState.index}|">작성자</td>
             <td th:text="${question.getCreatedDate()}" th:id="|questionCreatedDate${questionState.index}|">작성일</td>
             <td>
-                <div class="dropdown">
+                <div class="dropdown" th:if="${loginMember != null && loginMember.getLoginId().equals('test')}">
                     <input type="hidden" th:value="${question.getQuestionState()}" th:id="|state${questionState.index}|"/>
                     <button th:if="${question.getQuestionState() == T(com.example.demo.entity.QuestionState).UNRESOLVED}"
                             class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown" th:id="|unresolvedBtn${questionState.index}|">
@@ -72,6 +75,11 @@
                         <a class="dropdown-item" th:onclick="clickChangeQuestionStateBtn([[${questionState.index}]])">답변완료</a>
                     </div>
                 </div>
+                <div>
+                    <button th:if="${question.getQuestionState() == T(com.example.demo.entity.QuestionState).UNRESOLVED}" class="btn btn-danger">답변예정</button>
+                    <button th:if="${question.getQuestionState() == T(com.example.demo.entity.QuestionState).SOLVED}" class="btn btn-success">답변완료</button>
+                </div>
+
             </td>
             <td>
                 <a th:href="@{/questions/{id}(id=${question.getId()})}"  class="btn btn-primary">자세히 보기</a>

@@ -38,9 +38,15 @@ public class QuestionController {
      * 전체 게시물 가져오기
      */
     @GetMapping("/questions")
-    public String getAllQuestion(Model model, @PageableDefault(size = 10) Pageable pageable) {
+    public String getAllQuestion(Model model, @PageableDefault(size = 10) Pageable pageable,
+                                 @SessionAttribute(value = "loginId", required = false) String loginId) {
         model.addAttribute("questions", questionService.getAllWithMember(pageable));
         model.addAttribute("pages", IntStream.rangeClosed(0, questionRepository.findAll().size() / (pageable.getPageSize() + 1)).boxed().collect(Collectors.toList()));
+        try {
+            Member loginMember = memberService.getLoginMember(loginId);
+            model.addAttribute("loginMember", loginMember);
+        } catch(NoSuchElementException ex) {
+        }
         return "/questionList";
     }
 
@@ -49,10 +55,16 @@ public class QuestionController {
      */
     @GetMapping("/questions/{id}")
     private String getQuestion(@PathVariable("id") Long questionId, Model model,
-                               @SessionAttribute(value = "loginId", required = false) String loginId) {
+                               @SessionAttribute(value = "loginId", required = false) String loginId,
+                               RedirectAttributes redirectAttributes) {
         try {
             Question findQuestion = questionService.findQuestionWithMemberById(questionId)
                     .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 잆습니다."));
+            // 게시물을 작성한 본인 외에 운영자만 게시물 읽기 가능
+            if(!findQuestion.getMember().getLoginId().equals("test")) {
+                redirectAttributes.addAttribute("deniedAccess", "게시물에 접근할 수 없습니다");
+                return "redirect:/questions";
+            }
             model.addAttribute("question", new ResponseQuestionDto(
                     findQuestion.getId(), findQuestion.getTitle(), findQuestion.getContent(), findQuestion.getMember().getUsername(),
                     findQuestion.getCreatedDate(), findQuestion.getQuestionState()
