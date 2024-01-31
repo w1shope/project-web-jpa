@@ -47,6 +47,7 @@
         <button type="button" class="btn btn-secondary" onclick="writeAnswer()">댓글 작성</button>
     </div>
     <!-- 댓글 목록-->
+    <!-- 댓글 목록-->
     <div th:each="answer, answerState: ${answers}" style="margin-top: 20px; margin-bottom: 20px;"
          th:if="${answers}">
         <div class="border rounded" style="background-color: rgb(240, 240, 240); position:relative;">
@@ -60,15 +61,15 @@
             <div class="sticky-top"
                  style="position:absolute; margin-left: 650px; margin-top: 10px;">
                 <button th:id="|editRequestBtn${answerState.index}|" class="btn btn-primary"
-                        th:onclick="readOnlyAttrRemove([[${answerState.index}]])"
+                        th:onclick="clickEditAnswerBtn([[${answerState.index}]])"
                         th:if="${loginMember != null && loginMember.getNickName().equals(answer.getWriter())}">수정
                 </button>
                 <button th:id="|removeRequestBtn${answerState.index}|" class="btn btn-danger"
-                        th:onclick="deleteAnswer([[${answerState.index}]])"
+                        th:onclick="deleteComment([[${answerState.index}]])"
                         th:if="${loginMember != null && loginMember.getNickName().equals(answer.getWriter())}">삭제
                 </button>
                 <button th:id="|editSuccessBtn${answerState.index}|" class="btn btn-success" style="display: none;"
-                        th:onclick="editContent([[${answerState.index}]])">수정완료
+                        th:onclick="clickEditAnswerSuccessBtn([[${answerState.index}]])">수정완료
                 </button>
             </div>
             <hr style="width: 650px;">
@@ -98,6 +99,37 @@
             error: function(err) {
             }
         })
+    }
+
+    function clickEditAnswerBtn(index) {
+        document.getElementById("answerContent" + index).readOnly = false;
+        document.getElementById("answerContent" + index).style.backgroundColor = "rgb(255, 255, 255)";
+        document.getElementById("editRequestBtn" + index).style.display = "none";
+        document.getElementById("removeRequestBtn" + index).style.display = "none";
+        document.getElementById("editSuccessBtn" + index).style.display = "block";
+    }
+
+    function clickEditAnswerSuccessBtn(index) {
+        var questionId = document.getElementById("questionId").value; // 질문 번호
+        var updateContent = document.getElementById("answerContent" + index).value; // 수정 내용
+        var answerWriter = document.getElementById("answerWriter" + index).innerHTML; // 작성자
+        var answerCreatedDate = document.getElementById("answerCreatedDate" + index).innerHTML; // 작성일자
+        $.ajax({
+            type: "PATCH",
+            url: "/answers",
+            data: JSON.stringify({questionId: questionId, updateContent: updateContent, answerWriter: answerWriter, answerCreatedDate: answerCreatedDate}),
+            contentType: "application/json",
+            success: function(res) {
+                alert("질문에 대한 답변이 정상적으로 수정되었습니다");
+                window.location.href = "/questions/" + questionId;
+            },
+            error: function(err){
+                alert("질문에 대한 답변 수정에 실패하였습니다");
+                window.location.href = "/questions/" + questionId;
+            }
+        })
+
+
     }
 </script>
 <!-- 부트스트랩 JS 및 Popper.js CDN 추가 -->

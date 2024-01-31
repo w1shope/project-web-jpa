@@ -36,4 +36,13 @@ public class AnswerService {
                 .build();
         answerRepository.save(answer);
     }
+
+    public Optional<Answer> findAnswer(Long questionId, String nickName, LocalDateTime answerCreatedDate) {
+        return answerRepository.findAnswerWithMemberAndQuestion(questionId, nickName, answerCreatedDate);
+    }
+
+    @Transactional
+    public void updateContent(Answer answer, String updateContent) {
+        answerRepository.updateContent(updateContent, answer.getId());
+    }
 }

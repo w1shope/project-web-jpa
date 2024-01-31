@@ -1,16 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
+import com.example.demo.entity.Answer;
 import com.example.demo.entity.Member;
 import com.example.demo.entity.Question;
 import com.example.demo.repository.QuestionRepository;
 import com.example.demo.service.AnswerService;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.QuestionService;
-import com.example.demo.vo.DeleteQuestionVO;
-import com.example.demo.vo.EnrollAnswerVO;
-import com.example.demo.vo.UpdateQuestionStateVO;
-import com.example.demo.vo.UpdateQuestionVO;
+import com.example.demo.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -155,5 +153,18 @@ public class QuestionController {
         Question findQuestion = questionRepository.findById(vo.getQuestionId()).orElse(null);
         answerService.enroll(loginMember, findQuestion, vo.getAnswerContent());
         return "ok";
+    }
+
+    @ResponseBody
+    @PatchMapping("/answers")
+    public String editAnswer(@RequestBody UpdateAnswerVO vo) {
+        try {
+            Answer findAnswer = answerService.findAnswer(vo.getQuestionId(), vo.getAnswerWriter(), vo.getAnswerCreatedDate())
+                    .orElseThrow(() -> new NoSuchElementException("질문에 대한 답변을 찾을 수 없습니다."));
+            answerService.updateContent(findAnswer, vo.getUpdateContent());
+            return "ok";
+        } catch(NoSuchElementException ex) {
+            throw ex;
+        }
     }
 }
