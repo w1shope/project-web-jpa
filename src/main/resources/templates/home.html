@@ -36,6 +36,9 @@
 <script th:if="${param.requireLogin}">
     alert('[[${param.requireLogin}]]');
 </script>
+<script th:if="${param.joinSuccess}">
+    alert("[[${param.joinSuccess}]]");
+</script>
 
 <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">

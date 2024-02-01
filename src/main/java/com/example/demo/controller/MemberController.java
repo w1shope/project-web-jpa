@@ -35,11 +35,12 @@ public class MemberController {
 
     @PostMapping("/join")
     public String joinMember(@Valid @ModelAttribute("joinMember") RequestJoinMemberDto request
-            , BindingResult bindingResult) {
+            , BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "/join";
         }
         memberService.save(request);
+        redirectAttributes.addAttribute("joinSuccess", "회원가입에 성공하였습니다");
         return "redirect:/home";
     }
 
