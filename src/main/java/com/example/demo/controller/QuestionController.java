@@ -60,8 +60,9 @@ public class QuestionController {
         try {
             Question findQuestion = questionService.findQuestionWithMemberById(questionId)
                     .orElseThrow(() -> new NoSuchElementException("게시물을 읽어올 수 잆습니다."));
-            // 게시물을 작성한 본인 외에 운영자만 게시물 읽기 가능
-            if(!findQuestion.getMember().getLoginId().equals("test")) {
+            // 게시물 접근 가능 : 작성자, 관리자
+            if(!(memberService.getLoginMember(loginId) == findQuestion.getMember())
+                    && !memberService.getLoginMember(loginId).getLoginId().equals("test")) {
                 redirectAttributes.addAttribute("deniedAccess", "게시물에 접근할 수 없습니다");
                 return "redirect:/questions";
             }
