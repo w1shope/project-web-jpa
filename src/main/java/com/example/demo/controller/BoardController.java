@@ -69,7 +69,8 @@ public class BoardController {
         try {
             Board findBoard = boardService.findBoard(boardId); // 게시물 찾기
             model.addAttribute("board", new ResponseFindBoardDto(findBoard.getId(),
-                    findBoard.getTitle(), findBoard.getContent(), findBoard.getLikeCnt(), findBoard.getFile().getUploadFilename(),
+                    findBoard.getTitle(), findBoard.getContent(), findBoard.getLikeCnt(),
+                    findBoard.getFile() == null ? null : findBoard.getFile().getUploadFilename(),
                     findBoard.getMember()));
             // 댓글 찾기
             List<ResponseCommentDto> findComments = commentService.findCommentWithMemberAndBoard().stream()
