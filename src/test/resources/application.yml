@@ -1,0 +1,24 @@
+spring:
+#  H2 Database 설정
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:tcp://localhost/~/crud     # H2 DB 연결 주소 (Embedded Mode)
+#    username: sa        # H2 DB 접속 ID (사용자 지정)
+#    password:         # H2 DB 접속 PW (사용자 지정)
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  # JPA 설정
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true      # 쿼리 로그 포맷 (정렬)
+        show_sql: true        # 쿼리 로그 출력
+
+store_dir_path: "/Users/hope/Desktop/Desktop/upload-file/"
