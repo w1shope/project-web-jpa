@@ -35,7 +35,7 @@ public class Board {
     cascade = CascadeType.PERSIST)
     private List<View> views = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "file_id")
     File file;
 
@@ -43,8 +43,17 @@ public class Board {
         this.file = file;
     }
 
-    public void relationToMember(Member member){
-        this.member = member;
-        member.getBoards().add(this);
+    // 조회수 증가
+    public void increaseViewCnt() {
+        this.viewCnt += 1;
+    }
+
+    // 좋아요 증가
+    public void increaseLikeCnt() {
+        this.likeCnt += 1;
+    }
+    // 좋아요 감소
+    public void decreaseLikeCnt() {
+        this.likeCnt -= 1;
     }
 }

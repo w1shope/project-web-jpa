@@ -1,6 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.GetBoardsResponseDto;
+import com.example.demo.dto.RequestJoinMemberDto;
+import com.example.demo.dto.RequestLoginMemberDto;
+import com.example.demo.dto.RequestUpdateMemberEmailDto;
+import com.example.demo.dto.RequestUpdateMemberPhoneDto;
+import com.example.demo.dto.ResponseAvailabilityJoinDto;
 import com.example.demo.entity.Member;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.MemberService;
@@ -8,17 +13,22 @@ import com.example.demo.vo.CheckJoinIdVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,13 +39,14 @@ public class MemberController {
     private final BoardService boardService;
 
     @GetMapping("/join")
-    public String joinPage(@ModelAttribute("joinMember") RequestJoinMemberDto requestJoinMemberDto) {
+    public String joinPage(
+        @ModelAttribute("joinMember") RequestJoinMemberDto requestJoinMemberDto) {
         return "/join";
     }
 
     @PostMapping("/join")
     public String joinMember(@Valid @ModelAttribute("joinMember") RequestJoinMemberDto request
-            , BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        , BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "/join";
         }
@@ -51,7 +62,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public String loginMember(@Valid @ModelAttribute("loginMember") RequestLoginMemberDto request
-            , BindingResult bindingResult, Model model, HttpServletRequest httpServletRequest) {
+        , BindingResult bindingResult, Model model, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             return "/login";
         }
@@ -88,8 +99,9 @@ public class MemberController {
     }
 
     @GetMapping("/member/{loginId}/email")
-    public String updateEmailPage(@ModelAttribute("updateMember") RequestUpdateMemberEmailDto request,
-                                  @PathVariable("loginId") String loginId, Model model) {
+    public String updateEmailPage(
+        @ModelAttribute("updateMember") RequestUpdateMemberEmailDto request,
+        @PathVariable("loginId") String loginId, Model model) {
         Member loginMember = memberService.getLoginMember(loginId);
         model.addAttribute("loginMember", loginMember);
         return "/updateEmail";
@@ -97,8 +109,8 @@ public class MemberController {
 
     @PatchMapping("/member/{loginId}/email")
     public String updateEmail(@PathVariable("loginId") String loginId
-            , @Valid @ModelAttribute("updateMember") RequestUpdateMemberEmailDto request
-            , BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        , @Valid @ModelAttribute("updateMember") RequestUpdateMemberEmailDto request
+        , BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("loginMember", memberService.getLoginMember(loginId));
             redirectAttributes.addAttribute("updateFailed", "회원정보 수정에 실패하였습니다");
@@ -118,8 +130,8 @@ public class MemberController {
 
     @GetMapping("/member/{loginId}/phone")
     public String updatePhonePage(@PathVariable("loginId") String loginId
-            , @ModelAttribute("updateMember") RequestUpdateMemberPhoneDto request
-            , Model model, RedirectAttributes redirectAttributes) {
+        , @ModelAttribute("updateMember") RequestUpdateMemberPhoneDto request
+        , Model model, RedirectAttributes redirectAttributes) {
         try {
             Member loginMember = memberService.getLoginMember(loginId);
             model.addAttribute("loginMember", loginMember);
@@ -132,8 +144,8 @@ public class MemberController {
 
     @PatchMapping("/member/{loginId}/phone")
     public String updatePhone(@PathVariable("loginId") String loginId
-            , @Valid @ModelAttribute("updateMember") RequestUpdateMemberPhoneDto request
-            , BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        , @Valid @ModelAttribute("updateMember") RequestUpdateMemberPhoneDto request
+        , BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("loginMember", memberService.getLoginMember(loginId));
             return "/updatePhone";
@@ -152,12 +164,14 @@ public class MemberController {
 
     @GetMapping("/member/{loginId}/boards")
     public String findAllBoardsWrittenByMe(@PathVariable("loginId") String loginId
-            , RedirectAttributes redirectAttributes, Model model) {
+        , RedirectAttributes redirectAttributes, Model model) {
         try {
-            List<ResponseBoardListDto> result = boardService.getAllPosts(loginId).stream()
-                    .map(post -> new ResponseBoardListDto(post.getId(), post.getTitle(), post.getContent(),
-                            post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(), post.getLikeCnt()))
-                    .collect(Collectors.toList());
+            List<GetBoardsResponseDto> result = boardService.getAllPosts(loginId).stream()
+                .map(post -> new GetBoardsResponseDto(post.getId(), post.getTitle(),
+                    post.getContent(),
+                    post.getMember().getNickName(), post.getCreatedDate(), post.getViewCnt(),
+                    post.getLikeCnt()))
+                .collect(Collectors.toList());
             model.addAttribute("boards", result);
             return "/myPost";
         } catch (NoSuchElementException ex) {
@@ -172,7 +186,7 @@ public class MemberController {
         int isDuplicate = memberService.checkDuplicateJoinId(vo);
         log.info("duplicate={}", isDuplicate);
         return new ResponseAvailabilityJoinDto(
-                isDuplicate == 0 ? true : false
+            isDuplicate == 0 ? true : false
         );
     }
 }

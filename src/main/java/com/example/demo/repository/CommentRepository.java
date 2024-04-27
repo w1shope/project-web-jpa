@@ -1,32 +1,29 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Comment;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query(value = "select c from Comment c join fetch c.board b" +
-            " join fetch c.member m")
-    List<Comment> findCommentWithMemberAndBoard();
+    @Query("select c from Comment c left join fetch c.member m left join fetch c.board b"
+        + " where b.id = :boardId")
+    List<Comment> findComments(@Param("boardId") Long boardId);
 
-    @Modifying(clearAutomatically = true)
-    @Query(value = "delete from Comment c where c.id = :commentId")
-    void deleteComment(@Param(value = "commentId") Long id);
+    @Query("select c from Comment c join fetch c.member m join fetch c.board b"
+        + " where m.loginId = :loginId and b.id = :boardId and c.content = :content")
+    Optional<Comment> findCommentForDelete(@Param("loginId") String loginId,
+        @Param("boardId") Long boardId,
+        @Param("content") String content);
 
-    @Query(value = "select c from Comment c join fetch c.member m join fetch c.board b" +
-            " where m.nickName = :memberNickName and c.content = :commentContent and c.createdDate = :commentCreatedDate")
-    Optional<Comment> findCommentWithMemberAndBoardForLikeCnt(@Param(value = "memberNickName") String nickName,
-                                                              @Param(value = "commentContent") String content,
-                                                              @Param(value = "commentCreatedDate") LocalDateTime createdDate);
+    Optional<Comment> findCommentByBoardIdAndMemberId(Long boardId, Long memberId);
 
-    @Query(value = "select c.likeCnt from Comment c where c.id = :commentId")
-    long getLikeCnt(@Param(value = "commentId") Long id);
-
+    @Query("select c from Comment c join fetch c.board b join fetch c.member m"
+        + " where b.id = :boardId and m.nickName = :nickName and c.content = :content")
+    Optional<Comment> findCommentForUpdateLikeCnt(@Param("boardId") Long boardId,
+        @Param("nickName") String nickName,
+        @Param("content") String commentContent);
 }

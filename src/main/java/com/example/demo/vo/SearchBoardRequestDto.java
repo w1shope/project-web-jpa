@@ -3,7 +3,7 @@ package com.example.demo.vo;
 import lombok.Data;
 
 @Data
-public class SearchBoardConditionVO {
+public class SearchBoardRequestDto {
 
     private String condition;
 }

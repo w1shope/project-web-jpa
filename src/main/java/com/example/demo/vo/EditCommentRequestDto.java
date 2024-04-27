@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class EditCommentVO {
+public class EditCommentRequestDto {
 
     private Long boardId;
     private String newContent;

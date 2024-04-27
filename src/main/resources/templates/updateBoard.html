@@ -33,11 +33,11 @@
             <textarea class="form-control" th:field="*{board.content}" rows="20"></textarea>
         </div>
 
-        <div class="form-group" th:if="${board.getFile()}">
+        <div class="form-group" th:if="${board.getUploadFileName()}">
             <div id="originalFile" style="display: block">
                 <label>첨부 파일:</label>
                 <a th:href="@{/boards/{boardId}/file(boardId=${board.getBoardId()})}">
-                    <span th:text="${board.getFile().getUploadFilename()}"></span>
+                    <span th:text="${board.getUploadFileName()}"></span>
                     <button class="btn-close" onclick="removeFile(event)" aria-label="Close">X</button>
                 </a>
             </div>
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <div class="form-group" th:unless="${board.getFile()}">
+        <div class="form-group" th:unless="${board.getUploadFileName()}">
             <div>
                 <label for="file">파일 업로드:</label>
                 <input type="file" class="form-control-file" name="uploadFile">

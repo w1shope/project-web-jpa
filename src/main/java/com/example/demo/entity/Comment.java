@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,9 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    public List<ViewComment> viewComments = new ArrayList<>();
+
     public void updateContent(String content) {
         this.content = content;
         this.editDate = LocalDateTime.now();
@@ -42,4 +47,5 @@ public class Comment {
     public void decreaseLikeCnt() {
         this.likeCnt -= 1;
     }
+
 }

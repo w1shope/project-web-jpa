@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class ResponseBoardListDto {
+public class GetBoardsResponseDto {
 
     private Long boardId;
     private String title;

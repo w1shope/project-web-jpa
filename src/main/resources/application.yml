@@ -21,4 +21,4 @@ spring:
         format_sql: true      # 쿼리 로그 포맷 (정렬)
         show_sql: true        # 쿼리 로그 출력
 
-store_dir_path: "/Users/hope/Desktop/Desktop/upload-file/"
+store_dir_path: "/Users/hope/Desktop/Desktop/study/project/upload-file/"

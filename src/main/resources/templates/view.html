@@ -31,10 +31,10 @@
         <textarea class="form-control" th:field="*{board.content}" rows="20" readonly></textarea>
     </div>
 
-    <div class="form-group" th:if="${board.getUploadFilename()}">
+    <div class="form-group" th:if="${board.getUploadFileName()}">
         <label>첨부 파일:</label>
         <a th:href="@{/boards/{boardId}/file(boardId=${board.getBoardId()})}">
-            <span th:text="${board.getUploadFilename()}"></span>
+            <span th:text="${board.getUploadFileName()}"></span>
         </a>
     </div>
 
@@ -48,10 +48,10 @@
             </svg>
             <span th:text="${board.getLikeCnt()}" id="likeCnt" name="likeCnt">좋아요 개수</span>
         </button>
-        <a th:href="@{/boards/{boardId}/update(boardId=${board.getBoardId()})}" th:if="${loginMember != null && loginMember.getId() == board.getMember().getId()}">
+        <a th:href="@{/boards/{boardId}/update(boardId=${board.getBoardId()})}" th:if="${loginMember != null && loginMember.getId() == board.getMemberId()}">
             <button class="btn btn-primary">게시물 수정</button>
         </a>
-        <button class="btn btn-danger" onclick="deleteBoardBtn()" th:if="${loginMember != null && loginMember.getId() == board.getMember().getId()}">게시물 삭제</button>
+        <button class="btn btn-danger" onclick="deleteBoardBtn()" th:if="${loginMember != null && loginMember.getId() == board.getMemberId()}">게시물 삭제</button>
         <a th:href="@{/boards}">
             <button class="btn btn-secondary">게시물 목록</button>
         </a>
@@ -69,7 +69,7 @@
          th:if="${comments}">
         <div class="border rounded" style="background-color: rgb(240, 240, 240); position:relative;">
             <div class="vr" style="font-weight: bold; margin-top: 10px; margin-left: 10px;">
-                작성자:<span th:text="${comment.getWriter()}" th:id="|commentWriter${commentState.index}|"></span>
+                작성자:<span th:text="${comment.getNickName()}" th:id="|commentWriter${commentState.index}|"></span>
             </div>
             <div class="text-black-50" style="margin-left: 10px;">
                 작성일자: <span th:text="${comment.getCreatedDate()}"
@@ -90,11 +90,11 @@
                 </button>
                 <button th:id="|editRequestBtn${commentState.index}|" class="btn btn-primary"
                         th:onclick="readOnlyAttrRemove([[${commentState.index}]])"
-                        th:if="${loginMember != null && loginMember.getNickName().equals(comment.getWriter())}">수정
+                        th:if="${loginMember != null && loginMember.getNickName().equals(comment.getNickName())}">수정
                 </button>
                 <button th:id="|removeRequestBtn${commentState.index}|" class="btn btn-danger"
                         th:onclick="deleteComment([[${commentState.index}]])"
-                        th:if="${loginMember != null && loginMember.getNickName().equals(comment.getWriter())}">삭제
+                        th:if="${loginMember != null && loginMember.getNickName().equals(comment.getNickName())}">삭제
                 </button>
                 <button th:id="|editSuccessBtn${commentState.index}|" class="btn btn-success" style="display: none;"
                         th:onclick="editContent([[${commentState.index}]])">수정완료
@@ -169,14 +169,12 @@
         var checkBtn = confirm("댓글을 삭제하시겠습니까?");
         if (checkBtn) {
             var boardId = $("#boardId").val();
-            var commentCreatedDate = document.getElementById("commentCreatedDate" + index).innerHTML;
             var commentContent = document.getElementById("commentContent" + index).innerHTML;
             $.ajax({
                 type: "DELETE",
                 url: "/boards/comment",
                 data: JSON.stringify({
-                    boardId: boardId, commentCreatedDate: commentCreatedDate
-                    , commentContent: commentContent
+                    boardId: boardId, commentContent: commentContent
                 }),
                 contentType: "application/json",
                 success: function (res) {
@@ -223,15 +221,15 @@
     }
 
     function clickCommentLikeBtn(index) {
+        var boardId = document.getElementById("boardId").value;
         var commentWriter = document.getElementById("commentWriter" + index).innerHTML; // 작성자
         var commentContent = document.getElementById("commentContent" + index).value; // 작성내용
-        var commentCreatedDate = document.getElementById("commentCreatedDate" + index).innerHTML; // 작성일자
+        // var commentCreatedDate = document.getElementById("commentCreatedDate" + index).innerHTML; // 작성일자
         $.ajax({
             type: "POST",
             url: "/comments/like",
             data: JSON.stringify({
-                commentWriter: commentWriter, commentContent: commentContent,
-                commentCreatedDate: commentCreatedDate
+                commentWriter: commentWriter, commentContent: commentContent, boardId: boardId
             }),
             contentType: "application/json",
             success: function (res) {

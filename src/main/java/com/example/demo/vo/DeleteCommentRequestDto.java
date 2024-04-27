@@ -5,9 +5,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class UpdateCommentLikeCntVO {
+public class DeleteCommentRequestDto {
 
-    private String commentWriter;
-    private String commentContent;
+    private Long boardId;
     private LocalDateTime commentCreatedDate;
+    private String commentContent;
 }
