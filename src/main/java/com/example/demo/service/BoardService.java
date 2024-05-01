@@ -16,7 +16,6 @@ import com.example.demo.repository.BoardRepository;
 import com.example.demo.vo.SearchBoardRequestDto;
 import com.example.demo.vo.UpdateLikeCntRequestDto;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -60,8 +59,6 @@ public class BoardService {
                 Board board = Board.builder()
                     .title(request.getTitle())
                     .content(request.getContent())
-                    .viewCnt(0)
-                    .likeCnt(0)
                     .member(loginMember)
                     .file(file)
                     .build();
@@ -72,8 +69,6 @@ public class BoardService {
                 Board board = Board.builder()
                     .title(request.getTitle())
                     .content(request.getContent())
-                    .viewCnt(0)
-                    .likeCnt(0)
                     .member(loginMember)
                     .build();
                 boardRepository.save(board);

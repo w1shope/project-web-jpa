@@ -13,15 +13,12 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
 
@@ -39,7 +36,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board",
         cascade = CascadeType.PERSIST)
     private List<View> views = new ArrayList<>();
@@ -47,6 +43,14 @@ public class Board extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "file_id")
     File file;
+
+    @Builder
+    public Board(String title, String content, Member member, File file) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+        this.file = file;
+    }
 
     public void changeFile(File file) {
         this.file = file;

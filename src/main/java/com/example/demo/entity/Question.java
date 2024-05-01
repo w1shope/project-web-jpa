@@ -9,15 +9,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Question extends BaseEntity {
 
@@ -28,6 +25,7 @@ public class Question extends BaseEntity {
 
     @Column(name = "question_title")
     private String title; // 제목
+
     @Column(name = "question_content")
     private String content; // 내용
 
@@ -37,4 +35,12 @@ public class Question extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member; // 질문 등록한 회원
+
+    @Builder
+    public Question(String title, String content, QuestionState questionState, Member member) {
+        this.title = title;
+        this.content = content;
+        this.questionState = questionState;
+        this.member = member;
+    }
 }
