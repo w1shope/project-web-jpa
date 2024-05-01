@@ -34,8 +34,6 @@ public class CommentService {
     public Comment save(WriteCommentRequestDto vo, Board board, Member member) {
         Comment comment = Comment.builder()
             .content(vo.getContent())
-            .createdDate(LocalDateTime.now())
-            .editDate(LocalDateTime.now())
             .board(board)
             .member(member)
             .build();
@@ -46,7 +44,7 @@ public class CommentService {
     public List<GetCommentResponseDto> findComments(Long boardId) {
         return commentRepository.findComments(boardId).stream()
             .map(c -> new GetCommentResponseDto(c.getMember().getNickName(), c.getContent(),
-                c.getCreatedDate(), c.getEditDate(), c.getLikeCnt()))
+                c.getLikeCnt()))
             .toList();
     }
 

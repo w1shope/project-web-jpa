@@ -31,7 +31,6 @@ public class MemberService {
                 .nickName(request.getUsername())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .createdDate(LocalDateTime.now())
                 .build();
         return memberRepository.save(member).getId();
     }

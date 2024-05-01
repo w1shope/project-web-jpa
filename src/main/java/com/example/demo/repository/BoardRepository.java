@@ -27,7 +27,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findBoardWithFileByBoardId(@Param(value = "boardId") Long id);
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "update Board b set b.title = :title, b.content = :content, b.editDate = now()" +
+    @Query(value = "update Board b set b.title = :title, b.content = :content" +
         " where b.id = :boardId")
     void update(@Param(value = "boardId") Long id, @Param(value = "title") String title,
         @Param(value = "content") String content);

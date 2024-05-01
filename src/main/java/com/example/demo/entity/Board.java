@@ -1,18 +1,29 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board {
+public class Board extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,8 +32,6 @@ public class Board {
 
     private String title; // 제목
     private String content; // 내용
-    private LocalDateTime createdDate; // 작성 일자
-    private LocalDateTime editDate; // 수정 일자
     private long viewCnt; // 조회수
     private long likeCnt; // 좋아요
 
@@ -32,7 +41,7 @@ public class Board {
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board",
-    cascade = CascadeType.PERSIST)
+        cascade = CascadeType.PERSIST)
     private List<View> views = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -52,6 +61,7 @@ public class Board {
     public void increaseLikeCnt() {
         this.likeCnt += 1;
     }
+
     // 좋아요 감소
     public void decreaseLikeCnt() {
         this.likeCnt -= 1;

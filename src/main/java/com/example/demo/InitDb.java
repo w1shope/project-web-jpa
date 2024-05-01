@@ -41,7 +41,6 @@ public class InitDb {
                     .nickName("운영자")
                     .email("test@gmail.com")
                     .phone("010-1234-5678")
-                    .createdDate(LocalDateTime.now())
                     .build();
             memberRepository.save(member);
 
@@ -55,8 +54,6 @@ public class InitDb {
             Board board = Board.builder()
                     .title("titleA")
                     .content("contentA")
-                    .createdDate(LocalDateTime.now())
-                    .editDate(LocalDateTime.now())
                     .viewCnt(0)
                     .likeCnt(0)
                     .member(member)
@@ -72,15 +69,12 @@ public class InitDb {
                     .nickName("호프")
                     .email("a94496503@gmail.com")
                     .phone("010-9449-6503")
-                    .createdDate(LocalDateTime.now())
                     .build();
             memberRepository.save(member2);
 
             Question question = Question.builder()
                     .title("질문 제목A")
                     .content("질문 내용A")
-                    .createdDate(LocalDateTime.now())
-                    .editDate(null)
                     .member(member2)
                     .questionState(QuestionState.UNRESOLVED)
                     .build();

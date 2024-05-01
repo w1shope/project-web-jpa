@@ -27,7 +27,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     void delete(@Param(value = "questionId") Long id);
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "update Question q set q.title = :title, q.content = :content, q.editDate = now() where q.id = :questionId")
+    @Query(value = "update Question q set q.title = :title, q.content = :content where q.id = :questionId")
     void update(@Param(value = "title") String title, @Param(value = "content") String content, @Param(value = "questionId") Long id);
 
     @Modifying(clearAutomatically = true)

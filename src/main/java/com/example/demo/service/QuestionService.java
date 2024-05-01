@@ -65,8 +65,6 @@ public class QuestionService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .member(member)
-                .createdDate(LocalDateTime.now())
-                .editDate(null)
                 .questionState(QuestionState.UNRESOLVED)
                 .build();
         return questionRepository.save(question);

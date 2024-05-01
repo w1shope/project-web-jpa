@@ -1,18 +1,29 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +31,6 @@ public class Comment {
     private Long id;
 
     private String content;
-    private LocalDateTime createdDate;
-    private LocalDateTime editDate;
     private long likeCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +46,6 @@ public class Comment {
 
     public void updateContent(String content) {
         this.content = content;
-        this.editDate = LocalDateTime.now();
     }
 
     public void increaseLikeCnt() {

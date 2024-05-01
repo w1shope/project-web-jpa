@@ -22,7 +22,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
                                                      @Param(value = "createdDate") LocalDateTime answerCreatedDate);
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "update Answer a set a.content = :content, a.editDate = now() where a.id = :id")
+    @Query(value = "update Answer a set a.content = :content where a.id = :id")
     void updateContent(@Param(value = "content") String updateContent,
                        @Param(value = "id") Long answerId);
 }

@@ -28,9 +28,7 @@ public class AnswerService {
     @Transactional
     public void enroll(Member loginMember, Question question, String answerContent) {
         Answer answer = Answer.builder()
-                .createdDate(LocalDateTime.now())
                 .member(loginMember)
-                .editDate(null)
                 .question(question)
                 .content(answerContent)
                 .build();
